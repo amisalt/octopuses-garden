@@ -4,10 +4,10 @@ require("dotenv").config()
 module.exports = function(roles){
   return function(req,res,next){
     if(req.method === "OPTIONS"){
-        next()
+      next()
     }
     try{
-      const token = req.headers?.authorization?.split(" ")[1]
+      const {token} = req.cookies
       if(!token){
         return res.status(403).json({"message":"Unauthorized user"})
       }

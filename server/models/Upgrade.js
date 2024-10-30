@@ -6,7 +6,9 @@ const Upgrade = new Schema({
   description:{type:String, required:true},
   upgrade:{type:Number, required:true}, //like it is description of an upgrade but in numbers
   quality:{type:String, required:true}, //quality to which this upgrade is applied
-  device:{type:String, required:true}
+  device:{type:String, required:true},
+  class:{type:String, required:true},
+  classLevel:{type:Number, required:true},
 })
 
 module.exports = model("Upgrade", Upgrade)
