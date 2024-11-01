@@ -143,7 +143,7 @@ class GamePlayedController{
         }
         return newGameObject
       })
-      return res.status(200).json({message:"Leaderboard gained successfully", games})
+      return res.status(200).json({message:"Leaderboard gained successfully", leaderboard})
     }catch(e){
       console.log(e)
       return res.status(400).json({message:"Unhandled error", e})
