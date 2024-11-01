@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import "./AuthPage.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { logInQuery, logoutQuery } from '../../app/store/slices/AuthSlice'
+import { logInQuery, logoutQuery, makeAdminQuery } from '../../app/store/slices/AuthSlice'
 
 export function AuthPage() {
   let loggedIn = useSelector(state=>state.auth.loggedIn)
