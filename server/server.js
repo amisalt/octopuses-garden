@@ -3,6 +3,7 @@ require("dotenv").config()
 const imageRouter = require("./routers/imageRouter")
 const authRouter = require("./routers/authRouter")
 const gameInfoRouter = require("./routers/gameInfoRouter")
+const gamePlayedRouter = require("./routers/gamePlayedRouter")
 const mongoose = require("mongoose")
 const cookieParser = require("cookie-parser")
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
@@ -20,6 +21,7 @@ app.use(cookieParser())
 app.use("/image", imageRouter)
 app.use("/auth", authRouter)
 app.use("/gameInfo", gameInfoRouter)
+app.use("/game", gamePlayedRouter)
 
 const onlineGamePlayers = []
 

@@ -1,49 +1,58 @@
 const Router = require("express")
 const router = new Router()
 const controller = require("../controllers/AuthController")
-const {check, cookie} = require("express-validator")
+const {body, cookie} = require("express-validator")
 const rolesMiddleware = require("../middlewares/rolesMiddleware")
 const authMiddleware = require("../middlewares/authMiddleware")
 
 // * body: username, password
 router.post("/registration", 
 [
-  check("username", "Empty username").isString().notEmpty(), 
-  check("password", "Short password. Length over 8 characters is recommended").isString().isLength({min:8})
+  body("username", "Empty username").notEmpty(), 
+  body("password", "Short password. Length over 8 characters is recommended").isString().isLength({min:8})
 ],
 controller.registration)
 // ? getting tokens in cookies
+// ? getting user object
 // * body: username, password
 router.post("/login", [
-  check("username", "Empty username").isString().notEmpty(),
-  check("password", "Short password").isString().isLength({min:8}),
+  body("username", "Empty username").notEmpty(),
+  body("password", "Short password").notEmpty().isLength({min:8}),
 ], controller.login)
 // ? getting tokens in cookies
+// ? getting user object
 // * refreshToken in cookies
 router.get("/token", [
-  // cookie("refreshToken", "Invalid refresh token").isString()
+  cookie("refreshToken", "Empty refresh token").notEmpty()
 ], controller.token)
 // ! removing tokens in cookies
 router.get("/logout", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
   authMiddleware,
-  rolesMiddleware(["ADMIN", "USER"])
+  rolesMiddleware(["ADMIN", "USER"]),
 ], controller.logout)
 // * body : username(target user)
 router.post("/makeAdmin", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("username", "Empty username").notEmpty(),
   authMiddleware,
-  rolesMiddleware(["ADMIN"])
+  rolesMiddleware(["ADMIN"]),
 ], controller.makeAdmin)
 // * body : username(target user)
 router.post("/removeAdmin", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("username", "Empty username").notEmpty(),
   authMiddleware,
-  rolesMiddleware(["ADMIN"])
+  rolesMiddleware(["ADMIN"]),
 ], controller.removeAdmin)
 // * body : username(target user)
 router.post("/ban", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("username", "Empty username").notEmpty(),
   authMiddleware,
-  rolesMiddleware(["ADMIN"])
+  rolesMiddleware(["ADMIN"]),
 ], controller.ban)
 
-router.get("/placeholder/:id/:lol/:emae",  controller.placeholder)
+router.get("/placeholder",  controller.placeholder)
 
 module.exports = router

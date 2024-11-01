@@ -2,8 +2,10 @@ const GamePlayed = require("../models/GamePlayed")
 const Mode = require("../models/Mode")
 const GameInfo = require("../models/GameInfo")
 const User = require("../models/User")
+const Level = require("../models/Level")
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
+const {validationResult} = require("express-validator")
 
 function generateGameToken(id, start, level){
   const payload = {
@@ -16,12 +18,24 @@ function generateGameToken(id, start, level){
 class GamePlayedController{
   async start(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Starting game error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
         return res.status(400).json({message:`User is not existing`})
       }
-      const game = new GamePlayed({start:Date.now(), players:[user._id], level:req.params.levelId, mode:req.params.mode})
+      const level = await Level.findById(req.params.levelId)
+      if(!level){
+        return res.status(400).json({message:"Level is not existing"})
+      }
+      const mode = await Mode.findOne({value:req.params.mode})
+      if(!mode){
+        return res.status(400).json({message:"Mode is not existing"})
+      }
+      const game = new GamePlayed({start:Date.now(), players:[user._id], level:level._id, mode:mode.value})
       await game.save()
       const gameToken = generateGameToken(game._id, game.start, game.level)
       return res.status(200).json({message:"Game started and game token gained", gameToken})
@@ -32,6 +46,10 @@ class GamePlayedController{
   }
   async connect(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Connecting to game error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -55,6 +73,10 @@ class GamePlayedController{
   }
   async end(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Ending game error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -89,12 +111,24 @@ class GamePlayedController{
   }
   async leaderboardByLevel(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Getting leaderboard error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
         return res.status(400).json({message:`User is not existing`})
       }
-      const gamesSearchQuery = await GamePlayed.find({level:req.params.levelId, mode:req.params.mode}).sort({xp:-1}).limit(10)
+      const level = await Level.findById(req.params.levelId)
+      if(!level){
+        return res.status(400).json({message:"Level is not existing"})
+      }
+      const mode = await Mode.findOne({value:req.params.mode})
+      if(!mode){
+        return res.status(400).json({message:"Mode is not existing"})
+      }
+      const gamesSearchQuery = await GamePlayed.find({level:level._id, mode:mode.value}).sort({xp:-1}).limit(10)
       const games = gamesSearchQuery.map(async(game)=>{
         const newPlayersList = []
         for(player of game.players){

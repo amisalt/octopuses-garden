@@ -3,10 +3,15 @@ const GameInfo = require("../models/GameInfo")
 const Upgrade = require("../models/Upgrade")
 const GamePlayed = require("../models/GamePlayed")
 const Level = require("../models/Level")
+const {validationResult} = require("express-validator")
 
 class GameInfoController{
   async create(req, res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Creating game info error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -30,6 +35,10 @@ class GameInfoController{
   }
   async stats(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Getting stats error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -39,10 +48,18 @@ class GameInfoController{
       if(!gameInfo){
         return res.status(400).json({message:"User doesn't have game instance yet"})
       }
-      gameInfo = gameInfo.toObject()
+      const upgrades = []
+      for(let upgradeId of gameInfo.upgrades){
+        const upgrade = await Upgrade.findById(upgradeId)
+        if(!upgrade){
+          return res.status(400).json({message:"Upgrade is not existing"})
+        }
+        upgrades.push(upgrade.toObject())
+      }
       const gameInfoObject = {
         xp:gameInfo.xp,
-        money:gameInfo.money
+        money:gameInfo.money,
+        upgrades
       }
       return res.status(200).json({message:"Stats gained successfully", stats:gameInfoObject})
     }catch(e){
@@ -50,62 +67,12 @@ class GameInfoController{
       return res.status(400).json({message:"Unhandled error", e})
     }
   }
-  async gainXP(req,res){
-    try{
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
-      }
-      const gameInfo = await GameInfo.findById(user.gameInfo)
-      if(!gameInfo){
-        return res.status(400).json({message:"User doesn't have game instance yet"})
-      }
-      const gamePlayed = await GamePlayed.findById(req.gamePlayed.id)
-      if(!gamePlayed || gamePlayed.gainQueue.includes(user._id)){
-        return res.status(400).json({message:"Game id is not valid"})
-      }
-      const newGainQueue = gamePlayed.gainQueue.filter(id=>id!=user._id)
-      gamePlayed.gainQueue = newGainQueue
-      await gamePlayed.save()
-      let newXPvalue = gameInfo.xp + gamePlayed.xp
-      gameInfo.xp = newXPvalue
-      await gameInfo.save()
-      return res.status(200).json({message:"XP gained successfully"})
-    }catch(e){
-      console.error(e);
-      return res.status(400).json({message:"Unhandled error", e})
-    }
-  }
-  async gainMoney(req,res){
-    try{
-      const {id} = req.user
-      const user = User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
-      }
-      const gameInfo = await GameInfo.findById(user.gameInfo)
-      if(!gameInfo){
-        return res.status(400).json({message:"User doesn't have game instance yet"})
-      }
-      const gamePlayed = await GamePlayed.findById(req.gamePlayed.id)
-      if(!gamePlayed || gamePlayed.gainQueue.includes(user._id)){
-        return res.status(400).json({message:"Game id is not valid"})
-      }
-      const newGainQueue = gamePlayed.gainQueue.filter(id=>id!=user._id)
-      gamePlayed.gainQueue = newGainQueue
-      await gamePlayed.save()
-      let newMoneyValue = gameInfo.money + gamePlayed.money
-      gameInfo.money = newMoneyValue
-      await gameInfo.save()
-      return res.status(200).json({message:"Money gained successfully"})
-    }catch(e){
-      console.error(e);
-      return res.status(400).json({message:"Unhandled error", e})
-    }
-  }
   async buyUpgrade(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Buying upgrade error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -133,6 +100,8 @@ class GameInfoController{
           gameInfo.upgrades = gameInfo.upgrades.filter(id=>id!=upgradeLowerLevel._id)
         }
         await gameInfo.save()
+      }else{
+        return res.status(400).json({message:"You must have the previous version of this upgrade"})
       }
       return res.status(200).json({message:"Upgrade bought successfully"})
     }catch(e){
@@ -142,6 +111,10 @@ class GameInfoController{
   }
   async availableUpgrades(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Getting available upgrades error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -167,6 +140,10 @@ class GameInfoController{
   }
   async availableLevels(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Getting available levels error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){

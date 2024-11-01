@@ -26,9 +26,4 @@ function getFood(params, res){
 }
 router.get("/food/:level/:type", (req, res)=>getFood(req.params, res))
 
-router.get("/", (req,res)=>{
-  // TODO: make documentation for this all above here
-  res.send({a:"aksdlakdlaskld"})
-})
-
 module.exports = router

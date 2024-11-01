@@ -46,13 +46,18 @@ class AuthController{
   }
   async login(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Login error", errors})
+      }
       const {username,password} = req.body
       const user = await User.findOne({username})
       if(!user){
         return res.status(400).json({message:`User ${username} is not existing`})
       }
       const bannedRole = await Role.findOne({value:"BANNED"})
-      if(!bannedRole){
+      const adminRole = await Role.findOne({value:"ADMIN"})
+      if(!bannedRole || !adminRole){
         return res.status(400).json({message:"Roles distribution process went wrong"})
       }
       if(user.roles.includes(bannedRole)){
@@ -66,9 +71,14 @@ class AuthController{
       const refreshToken = generateRefreshToken()
       user.refreshToken = refreshToken
       await user.save()
+      const asAdmin = user.roles.includes(adminRole.value)
+      const userObject = {
+        username:user.username,
+        asAdmin
+      }
       res.cookie("token", token, { secure:true, expire:Date.now()+1000*60, httpOnly: true })
       .cookie("refreshToken", refreshToken, { secure:true, expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
-      return res.status(200).json({message:"Tokens gained"})
+      return res.status(200).json({message:"Tokens gained", asAdmin, user:userObject})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
@@ -76,13 +86,18 @@ class AuthController{
   }
   async token(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Token gaining error", errors})
+      }
       const {refreshToken} = req.cookies
       const user = await User.findOne({refreshToken})
       if(!user){
         return res.status(400).json({message:`User is not existing or refresh token is invalid`})
       }
       const bannedRole = await Role.findOne({value:"BANNED"})
-      if(!bannedRole){
+      const adminRole = await Role.findOne({value:"ADMIN"})
+      if(!bannedRole || !adminRole){
         return res.status(400).json({message:"Roles distribution process went wrong"})
       }
       if(user.roles.includes(bannedRole)){
@@ -92,9 +107,14 @@ class AuthController{
       const newRefreshToken = generateRefreshToken()
       user.refreshToken = newRefreshToken
       await user.save()
+      const asAdmin = user.roles.includes(adminRole.value)
+      const userObject = {
+        username:user.username,
+        asAdmin
+      }
       res.cookie("token", token, { secure:true, expire:Date.now()+1000*60, httpOnly: true })
       .cookie("refreshToken", newRefreshToken, { secure:true, expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
-      return res.status(200).json({message:"Tokens gained"})
+      return res.status(200).json({message:"Tokens gained", user:userObject})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
@@ -102,6 +122,10 @@ class AuthController{
   }
   async logout(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Logout error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -120,6 +144,10 @@ class AuthController{
   }
   async makeAdmin(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Making admin error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -138,7 +166,7 @@ class AuthController{
         targetUser.roles.push(adminRole.value)
         await targetUser.save()
       }
-      return res.status(200).json({message:`User ${username} is now admin`})
+      return res.status(200).json({message:`User is now admin`})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
@@ -146,6 +174,10 @@ class AuthController{
   }
   async removeAdmin(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Removing admin error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -165,7 +197,7 @@ class AuthController{
         targetUser.roles = newTargetUserRoles
         await targetUser.save()
       }
-      return res.status(200).json({message:`User ${username} is now deprived of the admin rights`})
+      return res.status(200).json({message:`User is now deprived of the admin rights`})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
@@ -173,6 +205,10 @@ class AuthController{
   }
   async ban(req,res){
     try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Banning error", errors})
+      }
       const {id} = req.user
       const user = await User.findById(id)
       if(!user){
@@ -194,7 +230,7 @@ class AuthController{
       }
       await GameInfo.findByIdAndDelete(targetUser.gameInfo)
       await GamePlayed.deleteMany({players:{"$in":[targetUser._id]}})
-      return res.status(200).json({message:`User ${username} is now banned`})
+      return res.status(200).json({message:`User is now banned`})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
@@ -202,7 +238,7 @@ class AuthController{
   }
   async placeholder(req,res){
     try{
-      return res.status(200).json({message:{...req.params}})
+      return res.status(200).json({message:{headers:req.headers}})
     }catch(e){
       console.error(e);
       return res.status(400).json({message:"Unhandled error", e})
