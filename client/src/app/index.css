@@ -10,11 +10,17 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 .page{
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 9vh);
+  padding: 2%;
+  box-sizing: border-box;
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

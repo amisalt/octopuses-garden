@@ -4,7 +4,7 @@ import axios from 'axios'
 export const registrationQuery = createAsyncThunk(
   'registration/registrationQuery',
   async({username,password})=>{
-    const response = await axios.post("/auth/registration", {username,password}).then(res=>res.data)
+    const response = await axios.post("/auth/registration", {username,password}).then(res=>res.data).catch(error=>error.response.data)
     return response.message
   }
 )
@@ -12,7 +12,7 @@ export const registrationQuery = createAsyncThunk(
 export const logInQuery =  createAsyncThunk(
   'auth/logInQuery',
   async ({username,password}) => {
-    const response = await axios.post("/auth/login", {username,password}).then(res=>res.data)
+    const response = await axios.post("/auth/login", {username,password}).then(res=>res.data).catch(error=>error.response.data.message)
     return response
   }
 )
@@ -20,7 +20,7 @@ export const logInQuery =  createAsyncThunk(
 export const tokenQuery = createAsyncThunk(
   'auth/tokenQuery',
   async () => {
-    const response = await axios.get("/auth/token").then(res=>res.data)
+    const response = await axios.get("/auth/token").then(res=>res.data).catch(error=>error.response.data.message)
     return response
   }
 )
@@ -28,11 +28,11 @@ export const tokenQuery = createAsyncThunk(
 export const logoutQuery = createAsyncThunk(
   "auth/logoutQuery",
   async()=>{
-    const response = await axios.get("/auth/logout").then(res=>res.data)
+    const response = await axios.get("/auth/logout").then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/logout").then(res=>res.data)
+        const response = await axios.get("/auth/logout").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -42,11 +42,11 @@ export const logoutQuery = createAsyncThunk(
 export const makeAdminQuery = createAsyncThunk(
   "auth/makeAdminQuery",
   async(username) => {
-    const response = await axios.post("/auth/makeAdmin", {username}).then(res=>res.data)
+    const response = await axios.post("/auth/makeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/makeAdmin").then(res=>res.data)
+        const response = await axios.get("/auth/makeAdmin").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -56,11 +56,11 @@ export const makeAdminQuery = createAsyncThunk(
 export const removeAdminQuery = createAsyncThunk(
   "auth/removeAdminQuery",
   async(username)=>{
-    const response = await axios.post("/auth/removeAdmin", {username}).then(res=>res.data)
+    const response = await axios.post("/auth/removeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/removeAdmin").then(res=>res.data)
+        const response = await axios.get("/auth/removeAdmin").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -70,11 +70,11 @@ export const removeAdminQuery = createAsyncThunk(
 export const banQuery = createAsyncThunk(
   "auth/banQuery",
   async(username)=>{
-    const response = await axios.post("/auth/ban", {username}).then(res=>res.data)
+    const response = await axios.post("/auth/ban", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/ban").then(res=>res.data)
+        const response = await axios.get("/auth/ban").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -89,7 +89,6 @@ const AuthSlice = createSlice({
       asAdmin:false
     },
     loggedIn:false,
-    asAdmin:false,
     loading:false,
     error:null,
     message:null
@@ -104,13 +103,13 @@ const AuthSlice = createSlice({
     })
     .addCase(registrationQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      state.message = action.payload === "Successfull registration" ? action.payload : null
-    })
-    .addCase(registrationQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
+      if(action.payload === "Successfull registration"){
+        state.message = action.payload
+        state.error = null
+      }else{
+        state.error = action.payload
+        state.message = null
+      }
     })
     // LOGIN
     .addCase(logInQuery.pending, (state, action) => {
@@ -120,17 +119,20 @@ const AuthSlice = createSlice({
     })
     .addCase(logInQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
       if(action.payload.message === "Tokens gained"){
         state.message = action.payload.message
+        state.error = null
         state.loggedIn = true
         state.user = action.payload.user
+      }else{
+        state.error = action.payload
+        state.message = null
+        state.loggedIn = false
+        state.user = {
+          username:null,
+          asAdmin:false
+        }
       }
-    })
-    .addCase(logInQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
     })
     // TOKEN
     .addCase(tokenQuery.pending, (state, action) => {
@@ -140,17 +142,20 @@ const AuthSlice = createSlice({
     })
     .addCase(tokenQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      if(action.payload === "Tokens gained"){
-        state.message = action.payload
-        state.loggedIn = false
+      if(action.payload.message === "Tokens gained"){
+        state.message = action.payload.message
+        state.error = null
+        state.loggedIn = true
         state.user = action.payload.user
+      }else{
+        state.error = action.payload
+        state.message = null
+        state.loggedIn = false
+        state.user = {
+          username:null,
+          asAdmin:false
+        }
       }
-    })
-    .addCase(tokenQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
     })
     // LOGOUT
     .addCase(logoutQuery.pending, (state, action) => {
@@ -160,16 +165,15 @@ const AuthSlice = createSlice({
     })
     .addCase(logoutQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
       if(action.payload === "Tokens cleared"){
         state.message = action.payload
+        state.error = null
         state.loggedIn = true
+      }else{
+        state.error = action.payload
+        state.message = null
+        state.loggedIn = false
       }
-    })
-    .addCase(logoutQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
     })
     // !ADMIN RIGHTS QUERY
     // MAKE ADMIN
@@ -180,13 +184,13 @@ const AuthSlice = createSlice({
     })
     .addCase(makeAdminQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      state.message = action.payload === `User is now admin` ? action.payload : null
-    })
-    .addCase(makeAdminQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
+      if(action.payload === `User is now admin`){
+        state.message = action.payload
+        state.error = null
+      }else{
+        state.error = action.payload
+        state.message = null
+      }
     })
     // REMOVE ADMIN
     .addCase(removeAdminQuery.pending, (state, action) => {
@@ -196,13 +200,13 @@ const AuthSlice = createSlice({
     })
     .addCase(removeAdminQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      state.message = action.payload === `User is now deprived of the admin rights` ? action.payload : null
-    })
-    .addCase(removeAdminQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
+      if(action.payload === `User is now admin`){
+        state.message = action.payload
+        state.error = null
+      }else{
+        state.error = action.payload
+        state.message = null
+      }
     })
     // BAN 
     .addCase(banQuery.pending, (state, action) => {
@@ -212,13 +216,13 @@ const AuthSlice = createSlice({
     })
     .addCase(banQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      state.message = action.payload === `User is now banned` ? action.payload : null
-    })
-    .addCase(banQuery.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
-      state.message = null
+      if(action.payload === `User is now admin`){
+        state.message = action.payload
+        state.error = null
+      }else{
+        state.error = action.payload
+        state.message = null
+      }
     })
   }
 })
