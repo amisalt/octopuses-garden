@@ -3,7 +3,10 @@ import React from 'react'
 export function MyLoader() {
   return (
     <div className='MyLoader'>
-      Loading...
-    </div>
+        <div className='bubble'></div>
+        <div className='bubble'></div>
+        <div className='bubble'></div>
+        <div className='bubble'></div>
+      </div>
   )
 }

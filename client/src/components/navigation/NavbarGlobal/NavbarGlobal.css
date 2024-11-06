@@ -1,0 +1,14 @@
+.NavbarGlobal{
+  height: 10vh;
+  width: 100vw;
+  border-top: 3px solid var(--accent-color-blue);
+  box-sizing: border-box;
+  position: relative;
+
+  background-color: var(--bg-color-black);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

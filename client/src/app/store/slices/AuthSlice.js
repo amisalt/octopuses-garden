@@ -4,7 +4,7 @@ import axios from 'axios'
 export const registrationQuery = createAsyncThunk(
   'registration/registrationQuery',
   async({username,password})=>{
-    const response = await axios.post("/auth/registration", {username,password}).then(res=>res.data).catch(error=>error.response.data)
+    const response = await axios.post("/api/auth/registration", {username,password}).then(res=>res.data).catch(error=>error.response.data)
     return response.message
   }
 )
@@ -12,7 +12,7 @@ export const registrationQuery = createAsyncThunk(
 export const logInQuery =  createAsyncThunk(
   'auth/logInQuery',
   async ({username,password}) => {
-    const response = await axios.post("/auth/login", {username,password}).then(res=>res.data).catch(error=>error.response.data.message)
+    const response = await axios.post("/api/auth/login", {username,password}).then(res=>res.data).catch(error=>error.response.data.message)
     return response
   }
 )
@@ -20,7 +20,7 @@ export const logInQuery =  createAsyncThunk(
 export const tokenQuery = createAsyncThunk(
   'auth/tokenQuery',
   async () => {
-    const response = await axios.get("/auth/token").then(res=>res.data).catch(error=>error.response.data.message)
+    const response = await axios.get("/api/auth/token").then(res=>res.data).catch(error=>error.response.data.message)
     return response
   }
 )
@@ -28,11 +28,11 @@ export const tokenQuery = createAsyncThunk(
 export const logoutQuery = createAsyncThunk(
   "auth/logoutQuery",
   async()=>{
-    const response = await axios.get("/auth/logout").then(res=>res.data).catch(error=>error.response.data)
+    const response = await axios.get("/api/auth/logout").then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/logout").then(res=>res.data).catch(error=>error.response.data)
+        const response = await axios.get("/api/auth/logout").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -42,11 +42,11 @@ export const logoutQuery = createAsyncThunk(
 export const makeAdminQuery = createAsyncThunk(
   "auth/makeAdminQuery",
   async(username) => {
-    const response = await axios.post("/auth/makeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
+    const response = await axios.post("/api/auth/makeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/makeAdmin").then(res=>res.data).catch(error=>error.response.data)
+        const response = await axios.get("/api/auth/makeAdmin").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -56,11 +56,11 @@ export const makeAdminQuery = createAsyncThunk(
 export const removeAdminQuery = createAsyncThunk(
   "auth/removeAdminQuery",
   async(username)=>{
-    const response = await axios.post("/auth/removeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
+    const response = await axios.post("/api/auth/removeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/removeAdmin").then(res=>res.data).catch(error=>error.response.data)
+        const response = await axios.get("/api/auth/removeAdmin").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
@@ -70,14 +70,23 @@ export const removeAdminQuery = createAsyncThunk(
 export const banQuery = createAsyncThunk(
   "auth/banQuery",
   async(username)=>{
-    const response = await axios.post("/auth/ban", {username}).then(res=>res.data).catch(error=>error.response.data)
+    const response = await axios.post("/api/auth/ban", {username}).then(res=>res.data).catch(error=>error.response.data)
     if(response.message === "Unauthorized user" || response.message === "User is not existing"){
       const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
       if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/auth/ban").then(res=>res.data).catch(error=>error.response.data)
+        const response = await axios.get("/api/auth/ban").then(res=>res.data).catch(error=>error.response.data)
         return response.message
       }
     }else return response.message
+  }
+)
+
+export const placeholderQuey = createAsyncThunk(
+  "auth/placeholderQuery",
+  async()=>{
+    let response
+    response = await axios.get("/api/backend").then(res=>res.data.express)
+    return response
   }
 )
 
@@ -88,13 +97,30 @@ const AuthSlice = createSlice({
       username:null,
       asAdmin:false
     },
-    loggedIn:false,
+    // loggedIn:false,
+    loggedIn:true,
     loading:false,
     error:null,
     message:null
   },
   extraReducers:(builder)=>{ 
     builder
+    // PLACEHOLDER
+    .addCase(placeholderQuey.pending, (state, action) => {
+      state.loading = true
+      state.error = null
+      state.message = null
+    })
+    .addCase(placeholderQuey.fulfilled, (state,action)=>{
+      state.loading = false
+      if(action.payload === "backend is connected ><"){
+        state.message = action.payload
+        state.error = null
+      }else{
+        state.error = action.payload
+        state.message = null
+      }
+    })
     // REGISTRATION
     .addCase(registrationQuery.pending, (state, action) => {
       state.loading = true
@@ -168,11 +194,11 @@ const AuthSlice = createSlice({
       if(action.payload === "Tokens cleared"){
         state.message = action.payload
         state.error = null
-        state.loggedIn = true
+        state.loggedIn = false
       }else{
         state.error = action.payload
         state.message = null
-        state.loggedIn = false
+        state.loggedIn = true
       }
     })
     // !ADMIN RIGHTS QUERY

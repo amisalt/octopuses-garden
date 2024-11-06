@@ -1,0 +1,39 @@
+.MyNavLink{
+  width: 60px;
+  height: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+
+  text-decoration: none;
+  font-weight: var(--font-weight-regular);
+
+  transition: .3s;
+  animation-timing-function: ease-in;
+}
+.MyNavLinkActive{
+  background-color: var(--accent-color-blue);
+  /* background-color:var(--font-color); */
+  flex: 2;
+}
+.MyNavLink > img{
+  height: 30%;
+}
+.MyNavLinkActive > img{
+  height: 60%;
+}
+.MyNavLink > span{
+  font-size: var(--font-size-small);
+  color: var(--font-color);
+  font-family: "Nunito", serif;
+  margin: 3px;
+}
+.MyNavLinkActive > span{
+  color: var(--bg-color-black);
+}

@@ -1,0 +1,49 @@
+.MyLoader {
+  width: 100px; /* Width of the square */
+  height: 100px; /* Height of the square */
+  background-color: #282c34; /* Background color of the square */
+  position: relative;
+  overflow: hidden; /* Hide bubbles that go outside the square */
+}
+
+.MyLoader > .bubble {
+  position: absolute;
+  bottom: 0; /* Start from the bottom */
+  left: 50%;
+  width: 10px; /* Width of the bubble */
+  height: 10px; /* Height of the bubble */
+  background-color: #61dafb; /* Color of the bubbles */
+  border-radius: 50%; /* Make them circular */
+  animation: rise 1.5s infinite; /* Animation for rising effect */
+}
+
+.MyLoader > .bubble:nth-child(1) {
+  left: 25%;
+  animation-delay: 0s; /* No delay */
+}
+
+.MyLoader > .bubble:nth-child(2) {
+  left: 50%;
+  animation-delay: 0.3s; /* Delay for the second bubble */
+}
+
+.MyLoader > .bubble:nth-child(3) {
+  left: 75%;
+  animation-delay: 0.6s; /* Delay for the third bubble */
+}
+
+.MyLoader > .bubble:nth-child(4) {
+  left: 40%;
+  animation-delay: 0.9s; /* Delay for the fourth bubble */
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0); /* Start at the bottom */
+    opacity: 1; /* Fully visible */
+  }
+  100% {
+    transform: translateY(-100px); /* Move up */
+    opacity: 0;
+  }
+}

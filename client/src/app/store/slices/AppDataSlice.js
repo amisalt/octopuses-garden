@@ -5,7 +5,11 @@ const AppDataSlice = createSlice({
   initialState:{
     BGMvolume:1,
     SEvolume:1,
-    gameState:false
+    gameState:true,
+    windowDimensions:{
+      width:0,
+      height:0
+    }
   },
   reducers:{
     changeBGMvolume:(state,action)=>{
@@ -16,7 +20,10 @@ const AppDataSlice = createSlice({
     },
     setGameState:(state,action)=>{
       state.gameState = action.payload
-    },    
+    },
+    setWindowDimensions:(state,action)=>{
+      state.windowDimensions = action.payload
+    },   
     saveAppData:(state)=>{
       localStorage.setItem('appData',JSON.stringify(state))
     },
@@ -27,5 +34,5 @@ const AppDataSlice = createSlice({
   }
 })
 
-export const {changeBGMvolume, changeSEvolume, saveAppData, getAppData} = AppDataSlice.actions
+export const {changeBGMvolume, changeSEvolume, setGameState, setWindowDimensions, saveAppData, getAppData} = AppDataSlice.actions
 export default AppDataSlice.reducer
