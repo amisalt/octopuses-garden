@@ -29,13 +29,7 @@ export const logoutQuery = createAsyncThunk(
   "auth/logoutQuery",
   async()=>{
     const response = await axios.get("/api/auth/logout").then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/api/auth/logout").then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    return response.message
   }
 )
 
@@ -43,13 +37,7 @@ export const makeAdminQuery = createAsyncThunk(
   "auth/makeAdminQuery",
   async(username) => {
     const response = await axios.post("/api/auth/makeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/api/auth/makeAdmin").then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    return response.message
   }
 )
 
@@ -57,13 +45,7 @@ export const removeAdminQuery = createAsyncThunk(
   "auth/removeAdminQuery",
   async(username)=>{
     const response = await axios.post("/api/auth/removeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/api/auth/removeAdmin").then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    return response.message
   }
 )
 
@@ -71,15 +53,25 @@ export const banQuery = createAsyncThunk(
   "auth/banQuery",
   async(username)=>{
     const response = await axios.post("/api/auth/ban", {username}).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/api/auth/ban").then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    return response.message
   }
 )
+
+export const createRoleQuery = createAsyncThunk(
+  'auth/createRole',
+  async (roleName) => {
+    const response = await axios.post('/api/auth/createRole', { value: roleName }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
+
+export const deleteRoleQuery = createAsyncThunk(
+  'auth/deleteRole',
+  async (roleName) => {
+    const response = await axios.post('/api/auth/deleteRole', { value: roleName }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
 
 export const placeholderQuey = createAsyncThunk(
   "auth/placeholderQuery",
@@ -248,6 +240,38 @@ const AuthSlice = createSlice({
       }else{
         state.error = action.payload
         state.message = null
+      }
+    })
+    // CREATE ROLE
+    .addCase(createRoleQuery.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    })
+    .addCase(createRoleQuery.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.message === "Role created successfully") {
+        state.message = action.payload.message;
+        state.error = null;
+      } else {
+        state.error = action.payload.message;
+        state.message = null;
+      }
+    })
+    // DELETE ROLE
+    .addCase(deleteRoleQuery.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    })
+    .addCase(deleteRoleQuery.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.message === "Role deleted successfully") {
+        state.message = action.payload.message;
+        state.error = null;
+      } else {
+        state.error = action.payload.message;
+        state.message = null;
       }
     })
   }

@@ -4,70 +4,89 @@ import axios from "axios"
 export const createGameQuery = createAsyncThunk(
   "gameInfo/createGameQuery",
   async()=>{
-    const response = await axios.get("/gameInfo/createGame").then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/gameInfo/createGame").then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    const response = await axios.get("/api/gameInfo/createGame").then(res=>res.data).catch(error=>error.response.data)
+    return response.message
   }
 )
 
 export const statsQuery = createAsyncThunk(
   "gameInfo/statsQuery",
   async()=>{
-    const response = await axios.get("/gameInfo/stats").then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get("/gameInfo/stats").then(res=>res.data).catch(error=>error.response.data)
-        return response
-      }
-    }else return response
+    const response = await axios.get("/api/gameInfo/stats").then(res=>res.data).catch(error=>error.response.data)
+    return response
   }
 )
 
 export const buyUpgradeQuery = createAsyncThunk(
   "gameInfo/buyUpgrade",
   async(upgradeId)=>{
-    const response = await axios.get(`/gameInfo/buyUpgrade/${upgradeId}`).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/gameInfo/buyUpgrade/${upgradeId}`).then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    const response = await axios.get(`/api/gameInfo/buyUpgrade/${upgradeId}`).then(res=>res.data).catch(error=>error.response.data)
+    return response.message
   }
 )
 
 export const availableUpgradesQuery = createAsyncThunk(
   "gameInfo/availableUpgrades",
   async()=>{
-    const response = await axios.get(`/gameInfo/availableUpgrades`).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/gameInfo/availableUpgrades`).then(res=>res.data).catch(error=>error.response.data)
-        return response
-      }
-    }else return response
+    const response = await axios.get(`/api/gameInfo/availableUpgrades`).then(res=>res.data).catch(error=>error.response.data)
+    return response
   }
 )
 
 export const availableLevelsQuery = createAsyncThunk(
   "gameInfo/availableLevels",
   async()=>{
-    const response = await axios.get(`/gameInfo/availableLevels`).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/gameInfo/availableLevels`).then(res=>res.data).catch(error=>error.response.data)
-        return response
-      }
-    }else return response
+    const response = await axios.get(`/api/gameInfo/availableLevels`).then(res=>res.data).catch(error=>error.response.data)
+    return response
+  }
+)
+
+export const createLevelQuery = createAsyncThunk(
+  'gameInfo/createLevel',
+  async (levelData) => {
+    const { name, description, priceBonus, xpBonus, xpRequired } = levelData;
+    const response = await axios.post('/api/gameInfo/createLevel', {
+      name,
+      description,
+      priceBonus,
+      xpBonus,
+      xpRequired
+    }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
+
+export const deleteLevelQuery = createAsyncThunk(
+  'gameInfo/deleteLevel',
+  async (levelId) => {
+    const response = await axios.post('/api/gameInfo/deleteLevel', {levelId}).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+)
+
+export const createUpgradeQuery = createAsyncThunk(
+  'gameInfo/createUpgrade',
+  async (upgradeData) => {
+    const { name, description, cost, upgrade, quality, device, class: upgradeClass, classLevel } = upgradeData;
+    const response = await axios.post('/api/gameInfo/createUpgrade', {
+      name,
+      description,
+      cost,
+      upgrade,
+      quality,
+      device,
+      class: upgradeClass,
+      classLevel
+    }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
+
+export const deleteUpgradeQuery = createAsyncThunk(
+  'gameInfo/deleteUpgrade',
+  async (upgradeId) => {
+    const response = await axios.post('/api/gameInfo/deleteUpgrade', {upgradeId}).then(res => res.data).catch(error => error.response.data);
+    return response.message;
   }
 )
 
@@ -181,6 +200,70 @@ const GameInfoSlice = createSlice({
         state.message = null
         state.levels.availableLevels = []
         state.levels.unavailableLevels = []
+      }
+    })
+    // CREATE LEVEL
+    .addCase(createLevelQuery.pending, (state, action) => {
+      state.loading = true
+      state.error = null
+      state.message = null
+    })
+    .addCase(createLevelQuery.fulfilled, (state, action) => {
+      state.loading = false
+      if(action.payload === "Level created") {
+        state.message = action.payload
+        state.error = null
+      } else {
+        state.error = action.payload
+        state.message = null
+      }
+    })
+    // DELETE LEVEL 
+    .addCase(deleteLevelQuery.pending, (state, action) => {
+      state.loading = true
+      state.error = null
+      state.message = null
+    })
+    .addCase(deleteLevelQuery.fulfilled, (state, action) => {
+      state.loading = false
+      if(action.payload === "Level deleted successfully") {
+        state.message = action.payload
+        state.error = null
+      } else {
+        state.error = action.payload
+        state.message = null
+      }
+    })
+    // CREATE UPGRADE
+    .addCase(createUpgradeQuery.pending, (state, action) => {
+      state.loading = true
+      state.error = null
+      state.message = null
+    })
+    .addCase(createUpgradeQuery.fulfilled, (state, action) => {
+      state.loading = false
+      if(action.payload === "Upgrade created successfully") {
+        state.message = action.payload
+        state.error = null
+      } else {
+        state.error = action.payload
+        state.message = null
+      }
+    })
+    // DELETE UPGRADE
+    .addCase(deleteUpgradeQuery.pending, (state, action) => {
+      state.loading = true
+      state.error = null
+      state.message = null
+    })
+    .addCase(deleteUpgradeQuery.fulfilled, (state, action) => {
+      state.loading = false
+      if(action.payload === "Upgrade deleted successfully") {
+        state.message = action.payload
+        state.error = null
+      } else {
+        state.error = action.payload
+        state.message = null
       }
     })
   }

@@ -4,14 +4,8 @@ import axios from "axios"
 export const startQuery = createAsyncThunk(
   "game/startQuery",
   async({levelId, mode})=>{
-    const response = await axios.get(`/game/start/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/game/start/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
-        return response
-      }
-    }else return response
+    const response = await axios.get(`/api/game/start/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
+    return response
   }
 )
 
@@ -19,14 +13,8 @@ export const connectQuery = createAsyncThunk(
   "game/connectQuery",
   async()=>{
     const gameToken = localStorage.getItem("gameToken")
-    const response = await axios.get(`/game/connect`, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/game/connect`, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    const response = await axios.get(`/api/game/connect`, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
+    return response.message
   }
 )
 
@@ -41,30 +29,34 @@ export const endQuery = createAsyncThunk(
       moneyOverall: moneyOverall ?? 0
     } 
     const gameToken = localStorage.getItem("gameToken")
-    const response = await axios.post(`/game/end`, responseBody, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.post(`/game/end`, responseBody, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
-        return response.message
-      }
-    }else return response.message
+    const response = await axios.post(`/api/game/end`, responseBody, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
+    return response.message
   }
 )
 
 export const leaderboardByLevelQuery = createAsyncThunk(
   "game/leaderboardByLevelQuery",
   async({levelId, mode})=>{
-    const response = await axios.get(`/game/leaderboard/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
-    if(response.message === "Unauthorized user" || response.message === "User is not existing"){
-      const tokenRefreshResponse = await axios.get("/auth/token").then(res=>res.data)
-      if(tokenRefreshResponse === "Tokens gained"){
-        const response = await axios.get(`/game/leaderboard/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
-        return response
-      }
-    }else return response
+    const response = await axios.get(`/api/game/leaderboard/${levelId}/${mode}`).then(res=>res.data).catch(error=>error.response.data)
+    return response
   }
 )
+
+export const createModeQuery = createAsyncThunk(
+  'gamePlayed/createMode',
+  async (modeName) => {
+    const response = await axios.post('/api/game/createMode', { value: modeName }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
+
+export const deleteModeQuery = createAsyncThunk(
+  'gamePlayed/deleteMode',
+  async (modeName) => {
+    const response = await axios.post('/api/game/deleteMode', { value: modeName }).then(res => res.data).catch(error => error.response.data);
+    return response.message;
+  }
+);
 
 const GamePlayedSlice = createSlice({
   name:"game",
@@ -142,6 +134,38 @@ const GamePlayedSlice = createSlice({
         state.error = action.payload.message
         state.message = null
         state.leaderboard = []
+      }
+    })
+    // CREATE MODE
+    .addCase(createModeQuery.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    })
+    .addCase(createModeQuery.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload === "Game mode created successfully") {
+        state.message = action.payload;
+        state.error = null;
+      } else {
+        state.error = action.payload;
+        state.message = null;
+      }
+    })
+    // DELETE MODE
+    .addCase(deleteModeQuery.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    })
+    .addCase(deleteModeQuery.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload === "Game mode deleted successfully") {
+        state.message = action.payload;
+        state.error = null;
+      } else {
+        state.error = action.payload;
+        state.message = null;
       }
     })
   }

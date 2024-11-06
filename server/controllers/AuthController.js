@@ -255,7 +255,7 @@ class AuthController{
       }
       const newRole = new Role({ value });
       await newRole.save();
-      return res.status(201).json({ message: `Role ${value} created successfully` });
+      return res.status(201).json({ message: `Role created successfully` });
     } catch (e) {
       console.error(e);
       return res.status(400).json({ message: "Unhandled error", e });
@@ -279,7 +279,7 @@ class AuthController{
         return res.status(404).json({ message: `Role ${value} does not exist` });
       }
       await Role.deleteOne({ value });
-      return res.status(200).json({ message: `Role ${value} deleted successfully` });
+      return res.status(200).json({ message: `Role deleted successfully` });
     } catch (e) {
       console.error(e);
       return res.status(400).json({ message: "Unhandled error", e });
