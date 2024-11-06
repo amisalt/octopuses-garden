@@ -42,5 +42,19 @@ router.get("/leaderboard/:levelId/:mode",[
   authMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.leaderboardByLevel)
+// *body: value
+router.post("/createMode", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("value", "Empty role value").notEmpty(),
+  authMiddleware,
+  rolesMiddleware(["ADMIN"]),
+], controller.createMode)
+// *body: value
+router.post("/deleteMode",[
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("value", "Empty role value").notEmpty(),
+  authMiddleware,
+  rolesMiddleware(["ADMIN"]),
+], controller.deleteMode)
 
 module.exports = router

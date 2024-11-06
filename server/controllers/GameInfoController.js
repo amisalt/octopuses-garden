@@ -164,6 +164,107 @@ class GameInfoController{
       return res.status(400).json({message:"Unhandled error", e})
     }
   }
+  async createLevel(req,res){
+    try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Getting available levels error", errors})
+      }
+      const {id} = req.user
+      const user = await User.findById(id)
+      if(!user){
+        return res.status(400).json({message:`User is not existing`})
+      }
+      const {name, description, priceBonus, xpBonus, xpRequired} = req.body
+      const levelCandidate = await Level.findOne({name, description,  priceBonus, xpBonus, xpRequired})
+      if(levelCandidate) return res.status(400).json({message:"Level already exists"})
+      const level = new Level({name, description, priceBonus, xpBonus, xpRequired})
+      await level.save()
+      return res.status(200).json({message:"Level created"})
+    }catch(e){
+      console.error(e);
+      return res.status(400).json({message:"Unhandled error", e})
+    }
+  }
+  async deleteLevel(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Deleting level error", errors });
+      }
+      const { id } = req.user;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: `User  is not existing` });
+      }
+      const {levelId} = req.body;
+      const level = await Level.findById(levelId);
+      if (!level) {
+        return res.status(400).json({ message: "Level is not existing" });
+      }
+      await Level.findByIdAndDelete(levelId);
+      return res.status(200).json({ message: "Level deleted successfully" });
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
+  async createUpgrade(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Creating upgrade error", errors });
+      }
+      const { id } = req.user;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: `User is not existing` });
+      }
+      const { name, description, cost, upgrade, quality, device, class: upgradeClass, classLevel } = req.body;
+      const existingUpgrade = await Upgrade.findOne({ name, description, cost, upgrade, quality, device, class: upgradeClass, classLevel });
+      if (existingUpgrade) {
+        return res.status(400).json({ message: "Upgrade already exists" });
+      }
+      const newUpgrade = new Upgrade({name,description,cost,upgrade,quality,device,class: upgradeClass,classLevel});
+      await newUpgrade.save();
+      return res.status(200).json({ message: "Upgrade created successfully", upgrade: newUpgrade });
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
+  async deleteUpgrade(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Deleting upgrade error", errors });
+      }
+      const { id } = req.user;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: "User is not existing" });
+      }
+      const { upgradeId } = req.body;
+      const upgrade = await Upgrade.findById(upgradeId);
+      if (!upgrade) {
+        return res.status(404).json({ message: "Upgrade not found" });
+      }
+      const usersWithUpgrade = await GameInfo.find({ 
+        'upgrades': upgradeId 
+      });
+      if (usersWithUpgrade.length > 0) {
+        await GameInfo.updateMany(
+          { 'upgrades': upgradeId },
+          { $pull: { 'upgrades': upgradeId } }
+        );
+      }
+      await Upgrade.findByIdAndDelete(upgradeId);
+      return res.status(200).json({ message: "Upgrade deleted successfully", affectedUsers: usersWithUpgrade.length});
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
 }
 
 module.exports = new GameInfoController()

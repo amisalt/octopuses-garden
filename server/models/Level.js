@@ -3,12 +3,7 @@ const {Schema, model} = require('mongoose')
 const Level= new Schema({
   name: {type: String, required: true},
   description: {type: String, required: true},
-  titleImg:{type:String, required:true},
-  food:[{type:String}],
-  customers:[{type:String}],
-  prices:{
-
-  },
+  priceBonus:{type:Number, required:true},
   xpBonus:{type:Number, required:true},
   xpRequired:{type:Number, required:true}
 })

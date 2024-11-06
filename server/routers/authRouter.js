@@ -52,6 +52,20 @@ router.post("/ban", [
   authMiddleware,
   rolesMiddleware(["ADMIN"]),
 ], controller.ban)
+// * body: value (role name)
+router.post("/createRole", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("value", "Empty role value").notEmpty(),
+  authMiddleware,
+  rolesMiddleware(["ADMIN"]),
+], controller.createRole);
+// * body: value (role name)
+router.post("/deleteRole", [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  body("value", "Empty role value").notEmpty(),
+  authMiddleware,
+  rolesMiddleware(["ADMIN"]),
+], controller.deleteRole);
 
 router.get("/placeholder",  controller.placeholder)
 

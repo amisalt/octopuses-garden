@@ -10,7 +10,7 @@ const GamePlayed = new Schema({
   level:{type:String, ref:"Level", required:true},
   xp:{type:Number, default:0},
   money:{type:Number, default:0},
-  mode:{type:String,  required:true},
+  mode:{type:String,  required:true, ref:"Mode"},
 
 })
 

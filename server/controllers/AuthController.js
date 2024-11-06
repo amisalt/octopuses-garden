@@ -236,6 +236,55 @@ class AuthController{
       return res.status(400).json({message:"Unhandled error", e})
     }
   }
+  async createRole(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Role creation error", errors });
+      }
+      const {id} = req.user
+      const user = await User.findById(id)
+      if(!user){
+        return res.status(400).json({message:`User is not existing`})
+      }
+      const { value } = req.body;
+      const roleValue = value.toUpperCase()
+      const existingRole = await Role.findOne({ value:roleValue });
+      if (existingRole) {
+        return res.status(400).json({ message: `Role ${value} already exists` });
+      }
+      const newRole = new Role({ value });
+      await newRole.save();
+      return res.status(201).json({ message: `Role ${value} created successfully` });
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
+  async deleteRole(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Role deletion error", errors });
+      }
+      const {id} = req.user
+      const user = await User.findById(id)
+      if(!user){
+        return res.status(400).json({message:`User is not existing`})
+      }
+      const { value } = req.body;
+      const roleValue = value.toUpperCase()
+      const existingRole = await Role.findOne({ value:roleValue });
+      if (!existingRole) {
+        return res.status(404).json({ message: `Role ${value} does not exist` });
+      }
+      await Role.deleteOne({ value });
+      return res.status(200).json({ message: `Role ${value} deleted successfully` });
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
   async placeholder(req,res){
     try{
       return res.status(200).json({message:{headers:req.headers}})

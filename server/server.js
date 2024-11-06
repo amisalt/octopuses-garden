@@ -18,7 +18,8 @@ const io = new Server(server);
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cookieParser())
-app.use("/image", imageRouter)
+app.use(express.static("static"))
+app.use("/image", express.static("static"))
 app.use("/auth", authRouter)
 app.use("/gameInfo", gameInfoRouter)
 app.use("/game", gamePlayedRouter)
@@ -32,7 +33,7 @@ const start = async ()=>{
             console.log(`server (${PORT}) started ><`);
         })
         app.get('/backend', (req, res) => {
-            res.send({ express: 'backend is connected ><' });
+            res.send({ express: 'backend is connected ><' })
         });
         await mongoose.connection.db.admin().command({ ping: 1 });
         console.log("database is connected ><");

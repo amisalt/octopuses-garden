@@ -31,7 +31,7 @@ class GamePlayedController{
       if(!level){
         return res.status(400).json({message:"Level is not existing"})
       }
-      const mode = await Mode.findOne({value:req.params.mode})
+      const mode = await Mode.findOne({value:req.params.mode.toUpperCase()})
       if(!mode){
         return res.status(400).json({message:"Mode is not existing"})
       }
@@ -147,6 +147,64 @@ class GamePlayedController{
     }catch(e){
       console.log(e)
       return res.status(400).json({message:"Unhandled error", e})
+    }
+  }
+  async createMode(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Creating mode error", errors });
+      }
+      const { id } = req.user;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: "User is not existing" });
+      }
+      const { value } = req.body;
+      const modeValue = value.toUpperCase();
+      const existingMode = await GameMode.findOne({ value: modeValue });
+      if (existingMode) {
+        return res.status(400).json({ message: "Mode already exists" });
+      }
+      const newMode = new GameMode({
+        value: modeValue
+      });
+      await newMode.save();
+      return res.status(200).json({ message: "Game mode created successfully", mode: newMode });
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
+    }
+  }
+  async deleteMode(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: "Deleting mode error", errors });
+      }
+      const { id } = req.user;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: "User is not existing" });
+      }
+      const { value } = req.body;
+      const modeValue = value.toUpperCase();
+      const mode = await GameMode.findOne({ value: modeValue });
+      if (!mode) {
+        return res.status(404).json({ message: "Mode not found" });
+      }
+      const gamesWithMode = await GamePlayed.find({ mode: modeValue });
+      if (gamesWithMode.length > 0) {
+        return res.status(400).json({ 
+          message: "Cannot delete mode. It is being used in existing games.",
+          gamesCount: gamesWithMode.length
+        });
+      }
+      await GameMode.findByIdAndDelete(mode._id);
+      return res.status(200).json({ message: "Game mode deleted successfully",deletedMode: modeValue});
+    } catch (e) {
+      console.error(e);
+      return res.status(400).json({ message: "Unhandled error", e });
     }
   }
 }
