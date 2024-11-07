@@ -6,14 +6,14 @@ import { SettingsPage } from "../../pages/Settings/SettingsPage"
 export const privateRoutes = [
     // {path:"/posts/:postId", element:PostPage, exact:true},
     // TODO make page for account
-    {path:"/account", element:AuthPage, exact:true, icon:undefined, desc:"Account"},
-    {path:"/cave", element:SettingsPage, exact:true, icon:undefined, desc:"Cave"},
-    {path:"/", element:GamePage, exact:true, icon:undefined, desc:"Start"},
-    {path:"/garden", element:SettingsPage, exact:true, icon:undefined, desc:"Garden"},
-    {path:"/settings", element:SettingsPage, exact:true, icon:undefined, desc:"Settings"},
+    {path:"/account", element:AuthPage, exact:true, icon:"/api/image/icons/nav/account.png", desc:"Account"},
+    {path:"/cave", element:SettingsPage, exact:true, icon:"/api/image/icons/nav/cave.png", desc:"Cave"},
+    {path:"/", element:GamePage, exact:true, icon:"/api/image/icons/nav/start.png", desc:"Start"},
+    {path:"/garden", element:SettingsPage, exact:true, icon:"/api/image/icons/nav/garden.png", desc:"Garden"},
+    {path:"/settings", element:SettingsPage, exact:true, icon:"/api/image/icons/nav/settings.png", desc:"Settings"},
     {path:"/level/:levelId", element:GamePage, exact:true, icon:undefined, desc:"Game"}
 ]
 export const publicRoutes = [
-    {path:"/auth", element:AuthPage, exact:true, icon:undefined, desc:"Log In"},
-    {path:"/settings", element:SettingsPage, exact:true, icon:undefined, desc:"Settings"}
+    {path:"/auth", element:AuthPage, exact:true, icon:"/api/image/icons/nav/account.png", desc:"Log In"},
+    {path:"/settings", element:SettingsPage, exact:true, icon:"/api/image/icons/nav/settings.png", desc:"Settings"}
 ]
