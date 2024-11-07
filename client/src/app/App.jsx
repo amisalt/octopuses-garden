@@ -4,13 +4,16 @@ import AppRouter from './router/AppRouter';
 import {Provider} from 'react-redux'
 import {store} from './store/index'
 import { NavbarGlobal } from '../components/navigation/NavbarGlobal/NavbarGlobal';
+import { AppContainer } from '../components/containers/AppContainer';
 
 export function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <AppRouter/>
-        <NavbarGlobal/>
+        <AppContainer>
+          <AppRouter/>
+          <NavbarGlobal/>  
+        </AppContainer>
       </BrowserRouter>
     </Provider>
   );
