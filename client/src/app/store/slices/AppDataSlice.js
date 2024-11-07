@@ -5,7 +5,7 @@ const AppDataSlice = createSlice({
   initialState:{
     BGMvolume:1,
     SEvolume:1,
-    gameState:true,
+    gameState:false,
     windowDimensions:{
       width:0,
       height:0
@@ -13,16 +13,16 @@ const AppDataSlice = createSlice({
   },
   reducers:{
     changeBGMvolume:(state,action)=>{
-      state.BGMvolume = action.payload
+      if(Number(n) === +n && n%1 !== 0) state.BGMvolume = action.payload
     },
     changeSEvolume:(state,action)=>{
-      state.SEvolume = action.payload
+      if(Number(n) === +n && n%1 !== 0) state.SEvolume = action.payload
     },
     setGameState:(state,action)=>{
-      state.gameState = action.payload
+      if(typeof action.payload === "boolean") state.gameState = action.payload
     },
     setWindowDimensions:(state,action)=>{
-      state.windowDimensions = action.payload
+      if(Number.isInteger(action.payload.width) && Number.isInteger(action.payload.height))state.windowDimensions = action.payload
     },   
     saveAppData:(state)=>{
       localStorage.setItem('appData',JSON.stringify(state))
