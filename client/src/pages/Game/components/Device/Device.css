@@ -1,0 +1,28 @@
+.Device{
+  width: 10vh;
+  height: 10vh;
+  position: relative;
+  background-color: violet;
+}
+.Device > .Main{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.Device > .Status{
+  position: absolute;
+  width: 8vh;
+  height: 8vh;
+  border-radius: 50%;
+  background-color: var(--bg-color-black);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -7.5vh;
+  left: 1vh;
+}
+.Device > .Cooked{
+  width: 100%;
+  background-color: aqua;
+}
