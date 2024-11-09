@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import "./AuthPage.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { logInQuery, logoutQuery, makeAdminQuery } from '../../app/store/slices/AuthSlice'
+import { logInQuery, logoutQuery, makeAdminQuery, saveAuthData } from '../../app/store/slices/AuthSlice'
 import { MyLoader } from '../../components/informationals/Loader/MyLoader'
 
 export function AuthPage() {
@@ -12,6 +12,7 @@ export function AuthPage() {
   const dispatch = useDispatch()
   async function handleLogInQuery(){
     dispatch(logInQuery({username, password}))
+    dispatch(saveAuthData())
   }
   return (
   <main className='page'>

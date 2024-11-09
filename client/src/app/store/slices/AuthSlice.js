@@ -1,5 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
+import { getAuthDataHook, saveAuthDataHook } from '../../../hooks/getDataHooks';
+axios.defaults.withCredentials = true;
 
 export const registrationQuery = createAsyncThunk(
   'registration/registrationQuery',
@@ -82,18 +84,32 @@ export const placeholderQuey = createAsyncThunk(
   }
 )
 
+const authData = getAuthDataHook()
+const initialState = {
+  ...authData,
+  loading:true,
+  error:null,
+  message:null
+}
+
 const AuthSlice = createSlice({
   name:"auth",
-  initialState:{
-    user:{
-      username:null,
-      asAdmin:false
+  initialState,
+  reducers:{
+    saveAuthData:(state)=>{
+      const authData = {
+        user:state.user,
+        loggedIn:state.loggedIn
+      }
+      localStorage.setItem("authData", JSON.stringify(authData))
     },
-    // loggedIn:false,
-    loggedIn:true,
-    loading:false,
-    error:null,
-    message:null
+    getAuthData:(state)=>{
+      const authData = JSON.parse(localStorage.getItem("authData"))
+      if(authData){
+        state.user = authData.user
+        state.loggedIn = authData.loggedIn
+      }
+    }
   },
   extraReducers:(builder)=>{ 
     builder
@@ -142,6 +158,7 @@ const AuthSlice = createSlice({
         state.error = null
         state.loggedIn = true
         state.user = action.payload.user
+        saveAuthDataHook(state)
       }else{
         state.error = action.payload
         state.message = null
@@ -150,6 +167,7 @@ const AuthSlice = createSlice({
           username:null,
           asAdmin:false
         }
+        saveAuthDataHook(state)
       }
     })
     // TOKEN
@@ -165,6 +183,7 @@ const AuthSlice = createSlice({
         state.error = null
         state.loggedIn = true
         state.user = action.payload.user
+        saveAuthDataHook(state)
       }else{
         state.error = action.payload
         state.message = null
@@ -173,6 +192,7 @@ const AuthSlice = createSlice({
           username:null,
           asAdmin:false
         }
+        saveAuthDataHook(state)
       }
     })
     // LOGOUT
@@ -187,10 +207,12 @@ const AuthSlice = createSlice({
         state.message = action.payload
         state.error = null
         state.loggedIn = false
+        saveAuthDataHook()
       }else{
         state.error = action.payload
         state.message = null
         state.loggedIn = true
+        saveAuthDataHook()
       }
     })
     // !ADMIN RIGHTS QUERY
@@ -277,4 +299,5 @@ const AuthSlice = createSlice({
   }
 })
 
+export const {saveAuthData, getAuthData} = AuthSlice.actions
 export default AuthSlice.reducer

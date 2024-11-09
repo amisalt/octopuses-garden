@@ -9,17 +9,11 @@ export function NavbarGlobal() {
   const gameState = useSelector(state=>state.appData.gameState)
   return (
     <div className='NavbarGlobal' style={{display:gameState ? "none" : "flex"}}>
-      {
-        loggedIn?(
-          privateRoutes.map(route=>{
-            if(!route.path.includes("/level")) return (<MyNavLink key={route.path} route={route}/>)}
-          )
-        ):(
-          publicRoutes.map(route=>(
-            <MyNavLink key={route.path} route={route}/>
-          ))
-        )
-      }
+      {loggedIn ? privateRoutes.map(route=>{
+        if(!route.path.includes("/level")) return (<MyNavLink key={route.path} route={route}/>)}
+      ) : publicRoutes.map(route=>{
+        if(!route.path.includes("/level")) return (<MyNavLink key={route.path} route={route}/>)}
+      )}
     </div>
   )
 }

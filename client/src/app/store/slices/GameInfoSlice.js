@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
+axios.defaults.withCredentials = true;
 
 export const createGameQuery = createAsyncThunk(
   "gameInfo/createGameQuery",
@@ -103,7 +104,7 @@ const GameInfoSlice = createSlice({
     },
     availableUpgrades:[],
     levels:{
-      availableLevels:[],
+      availableLevels:[{_id:"8",priceBonus:1,xpBonus:1}],
       unavailableLevels:[]
     }
   },

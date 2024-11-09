@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from  "@reduxjs/toolkit"
 import axios from "axios"
+axios.defaults.withCredentials = true;
 
 export const startQuery = createAsyncThunk(
   "game/startQuery",

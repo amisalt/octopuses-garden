@@ -15,7 +15,7 @@
   max-width: 980px;
   background-color: var(--bg-color-black);
 }
-.GamePage > .MainSection{
+.GamePage > .Main{
   max-width: 980px;
   width: 100%;
   display: flex;
@@ -26,20 +26,57 @@
   position: relative;
 }
 
-.GamePage > .MainSection > div{
+.GamePage > .Main > div{
   width:100%;
 }
-.GamePage > .MainSection > .Clients{
+.GamePage > .Main > .Clients{
   height: 30%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: 1fr;
 }
-.GamePage > .MainSection > .Kitchen{
+.GamePage > .Main > .Kitchen{
   height: 70%;
   background-color: black;
+  position: relative;
 }
-.GamePage > .MainSection .Controls{
+.GamePage > .Main > .Controls{
   height: 10vh;
-  background-color: #F1FFC4;
+  background-color: var(--font-color);
+}
+
+.GamePage > .Main > .Kitchen > .SideCountertop{
+  width: 10vh;
+  height: 100%;
+  background-color: var(--font-color);
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+.GamePage > .Main > .Kitchen > .SideCountertop.Left{
+  left: 0;
+}
+.GamePage > .Main > .Kitchen > .SideCountertop.Right{
+  right: 0;
+}
+.GamePage > .Main > .Kitchen > .SideCountertop > .Inner{
+  height: calc(100% - 10vh);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.GamePage > .Main > .Kitchen > .TopCountertop{
+  height: 10vh;
+  width: calc(100% - 20vh);
+  background-color: var(--font-color);
+  position: absolute;
+  top: 0;
+  left: 10vh;
+  border-bottom: 15px solid #c79b21;
 }

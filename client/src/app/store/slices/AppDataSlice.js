@@ -1,16 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getAppDataHook } from "../../../hooks/getDataHooks";
+
+const initialState = getAppDataHook()
 
 const AppDataSlice = createSlice({
   name:"appData",
-  initialState:{
-    BGMvolume:1,
-    SEvolume:1,
-    gameState:false,
-    windowDimensions:{
-      width:0,
-      height:0
-    }
-  },
+  initialState,
   reducers:{
     changeBGMvolume:(state,action)=>{
       if(Number(n) === +n && n%1 !== 0) state.BGMvolume = action.payload

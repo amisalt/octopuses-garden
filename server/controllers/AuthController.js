@@ -76,8 +76,8 @@ class AuthController{
         username:user.username,
         asAdmin
       }
-      res.cookie("token", token, { secure:true, expire:Date.now()+1000*60, httpOnly: true })
-      .cookie("refreshToken", refreshToken, { secure:true, expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
+      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
+      .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
       return res.status(200).json({message:"Tokens gained", asAdmin, user:userObject})
     }catch(e){
       console.error(e);
@@ -88,7 +88,7 @@ class AuthController{
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Token gaining error", errors})
+        return res.status(400).json({message:"Token gaining error", errors, cookies:req.cookies})
       }
       const {refreshToken} = req.cookies
       const user = await User.findOne({refreshToken})
@@ -112,8 +112,8 @@ class AuthController{
         username:user.username,
         asAdmin
       }
-      res.cookie("token", token, { secure:true, expire:Date.now()+1000*60, httpOnly: true })
-      .cookie("refreshToken", newRefreshToken, { secure:true, expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
+      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
+      .cookie("refreshToken", newRefreshToken, { expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
       return res.status(200).json({message:"Tokens gained", user:userObject})
     }catch(e){
       console.error(e);
