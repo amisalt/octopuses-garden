@@ -1,0 +1,24 @@
+.MyCheckBox{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.1rem;
+  margin: 0.6rem;
+}
+
+.MyCheckBoxLO{
+  background-color: transparent;
+  border: 0;
+  color: var(--font-color);
+  font-size: var(--font-size-medium);
+  font-family: "Jersey 25", sans-serif;
+  padding: 0.6rem;
+}
+.MyCheckBoxLO:active{
+  border: 3px solid var(--accent-color-blue);
+}
+.MyCheckBoxLO:focus-visible{
+  outline: 0;
+  border: 3px solid var(--accent-color-blue);
+}

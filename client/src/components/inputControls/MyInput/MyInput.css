@@ -1,0 +1,36 @@
+.MyInputContainer{
+  height:auto;
+  position: relative;
+}
+.MyInput{
+  font-family: "Jersey 25", sans-serif;
+  font-size: var(--font-size-big);
+  font-weight: var(--font-weight);
+  color: var(--font-color);
+  background-color: var(--bg-color-black);
+  border: 3px solid var(--accent-color-blue);
+  padding: 0.5rem;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+}
+.MyInput::placeholder{
+  color: var(--font-color);
+  opacity: .5;
+}
+.MyInput:active{
+  background-color: var(--accent-color-blue);
+  color: var(--bg-color-black);
+}
+.MyInput:focus-visible{
+  outline: 0;
+  background-color: var(--accent-color-blue);
+  color: var(--bg-color-black);
+}
+.MyInputContainer > .RevealHideButton{
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  right: 0.5rem;
+  top: calc(50% - 20px);
+}
