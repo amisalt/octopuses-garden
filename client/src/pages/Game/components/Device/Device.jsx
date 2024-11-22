@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react'
 import "./Device.css"
-import { MyProgressCircular } from '../../../../components/informationals/ProgressBar/MyProgress'
+import { MyProgressCircularDeterminate } from '../../../../components/informationals/ProgressBar/MyProgress'
 
 export function Device({food, grabItem, cooldown}) {
   const [ready, setReady] = useState(false)
@@ -37,7 +37,7 @@ export function Device({food, grabItem, cooldown}) {
     <div className='Device' ref={deviceBox} onClick={handleOnClick}>
       <img src={`/api/image/devices/${food}.png`} alt={`${food} device`} className='Main'/>
       { cookingProgress>0 && <div className='Status'>
-        { ready ? (<img src={`/api/image/food/${food}.png`} alt={`cooked ${food}`} className='Cooked'/>) : (<MyProgressCircular progress={cookingProgress}/>)}
+        { ready ? (<img src={`/api/image/food/${food}.png`} alt={`cooked ${food}`} className='Cooked'/>) : (<MyProgressCircularDeterminate progress={cookingProgress}/>)}
       </div>}
     </div>
   )
