@@ -8,7 +8,7 @@ const authMiddleware = require("../middlewares/authMiddleware")
 // * body: username, password
 router.post("/registration", 
 [
-  body("username", "Empty username").notEmpty(), 
+  body("username", "Empty username").notEmpty().matches(/^[A-Za-z0-9]+$/), 
   body("password", "Short password. Length over 8 characters is recommended").isString().isLength({min:8})
 ],
 controller.registration)
@@ -16,7 +16,7 @@ controller.registration)
 // ? getting user object
 // * body: username, password
 router.post("/login", [
-  body("username", "Empty username").notEmpty(),
+  body("username", "Empty username").notEmpty().matches(/^[A-Za-z0-9]+$/),
   body("password", "Short password").notEmpty().isLength({min:8}),
 ], controller.login)
 // ? getting tokens in cookies
@@ -31,6 +31,7 @@ router.get("/logout", [
   authMiddleware,
   rolesMiddleware(["ADMIN", "USER"]),
 ], controller.logout)
+// ! ADMIN QUERYS
 // * body : username(target user)
 router.post("/makeAdmin", [
   cookie("token", "Empty token or is not JWT").isJWT(),
