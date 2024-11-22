@@ -8,7 +8,7 @@ export default function AppRouter() {
   return (
     <Routes>
       {loggedIn ? privateRoutes.map(route=>(<Route key={route.path} {...route} element={<route.element/>}/>)) : publicRoutes.map(route=>(<Route key={route.path} {...route} element={<route.element/>}/>))}
-      <Route path='*' element={<Navigate to='/'/>}/>
+      <Route path='*' element={<Navigate to={loggedIn?'/':'/auth'}/>}/>
     </Routes>
   )
 }
