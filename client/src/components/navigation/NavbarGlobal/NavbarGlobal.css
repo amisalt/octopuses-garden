@@ -1,6 +1,6 @@
 .NavbarGlobal{
-  height: 10vh;
-  width: 100vw;
+  height: 10dvh;
+  width: 100dvw;
   border-top: 3px solid var(--accent-color-blue);
   box-sizing: border-box;
   position: relative;

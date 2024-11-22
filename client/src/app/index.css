@@ -1,12 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 :root{
   --bg-color-black:#272838;
   --bg-color-violet:#34113F;
   --accent-color-blue:#6665DD;
   --accent-color-pink:#E16F7C;
   --font-color:#fdca40;
-  --font-weight-regular:400;
-  --font-weight-bold:600;
-  --font-weight-extra-bold:800;
+  --font-weight:400;
   --font-size-big: 24px;
   --font-size-medium: 18px;
   --font-size-small: 14px; 
@@ -24,7 +24,8 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: "Nunito", serif;
+  font-family: "Jersey 25", sans-serif;
+  color: var(--font-color);
   font-optical-sizing: auto;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -36,10 +37,11 @@ code {
 }
 
 .page{
-  width: 100vw;
-  height: calc(100vh - 9vh);
+  width: 100dvw;
+  height: 90dvh;
   padding: 2%;
   box-sizing: border-box;
+  position: relative;
   display: flex;
   align-content: center;
   flex-direction: column;
