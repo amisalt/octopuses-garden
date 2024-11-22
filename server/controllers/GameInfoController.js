@@ -10,34 +10,32 @@ class GameInfoController{
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Creating game info error", errors})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
-      }
+      const user = await User.findById(req.user.id)
       const gameInfo = await GameInfo.findById(user.gameInfo)
       if (!gameInfo){
         const gameInfo = new GameInfo()
         await gameInfo.save()
         user.gameInfo = gameInfo._id
         await user.save()
-        return res.status(200).json({message:"Game instance successfully created"})
       }
-      else{
-        return res.status(200).json({message:"Game instance already exists"})
-      }
+      return res.status(200).json({message:`Success`, errors:[{
+        type:"server",
+        msg:`Game instance created successfully! Let the adventure begin!`,
+        path:"create",
+        location:"server"
+      }]})
     }catch(e){
       console.error(e);
-      return res.status(400).json({message:"Unhandled error", e})
+      return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
   async stats(req,res){
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Getting stats error", errors})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
       const {id} = req.user
       const user = await User.findById(id)

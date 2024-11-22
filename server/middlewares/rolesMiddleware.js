@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken")
+
 require("dotenv").config()
 
 module.exports = function(roles){
@@ -9,7 +10,12 @@ module.exports = function(roles){
     try{
       const {token} = req.cookies
       if(!token){
-        return res.status(403).json({"message":"Unauthorized user"})
+        return res.status(403).json({"message":"Access error", errors:[{
+          type:"user",
+          msg:"Unauthorized user",
+          path:"token",
+          location:"user"
+        }]})
       }
       const {roles: userRoles} = jwt.verify(token, process.env.SECRET)
       let hasRole = false
@@ -19,12 +25,17 @@ module.exports = function(roles){
         }
       });
       if(!hasRole){
-        return res.status(403).json({"message":"Access denied"})
+        return res.status(403).json({"message":"Access error", errors:[{
+          type:"user",
+          msg:`User doesn't have ${roles.join(', ')} role(s)`,
+          path:"role",
+          location:"user"
+        }]})
       }
       next()
     }catch(e){
       console.error(e);
-      return res.status(400).json({"message":"Unhandled error"})
+      return res.status(400).json({"message":"Unhandled error", errors:e})
     }
   }
 }
