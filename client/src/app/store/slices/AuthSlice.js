@@ -7,7 +7,7 @@ export const registrationQuery = createAsyncThunk(
   'registration/registrationQuery',
   async({username,password})=>{
     const response = await axios.post("/api/auth/registration", {username,password}).then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -31,7 +31,7 @@ export const logoutQuery = createAsyncThunk(
   "auth/logoutQuery",
   async()=>{
     const response = await axios.get("/api/auth/logout").then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -39,7 +39,7 @@ export const makeAdminQuery = createAsyncThunk(
   "auth/makeAdminQuery",
   async(username) => {
     const response = await axios.post("/api/auth/makeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -47,7 +47,7 @@ export const removeAdminQuery = createAsyncThunk(
   "auth/removeAdminQuery",
   async(username)=>{
     const response = await axios.post("/api/auth/removeAdmin", {username}).then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -55,7 +55,7 @@ export const banQuery = createAsyncThunk(
   "auth/banQuery",
   async(username)=>{
     const response = await axios.post("/api/auth/ban", {username}).then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -63,7 +63,7 @@ export const createRoleQuery = createAsyncThunk(
   'auth/createRole',
   async (roleName) => {
     const response = await axios.post('/api/auth/createRole', { value: roleName }).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 );
 
@@ -71,7 +71,7 @@ export const deleteRoleQuery = createAsyncThunk(
   'auth/deleteRole',
   async (roleName) => {
     const response = await axios.post('/api/auth/deleteRole', { value: roleName }).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 );
 
@@ -87,8 +87,8 @@ export const placeholderQuey = createAsyncThunk(
 const authData = getAuthDataHook()
 const initialState = {
   ...authData,
-  loading:true,
-  error:null,
+  loading:false,
+  errors:null,
   message:null
 }
 
@@ -96,6 +96,11 @@ const AuthSlice = createSlice({
   name:"auth",
   initialState,
   reducers:{
+    hideMessage:(state, action)=>{
+      const cloneErrors = [...state.errors]
+      cloneErrors.splice(action.payload, 1)
+      if(cloneErrors.length > 0)state.errors = cloneErrors
+    },
     saveAuthData:(state)=>{
       const authData = {
         user:state.user,
@@ -137,13 +142,8 @@ const AuthSlice = createSlice({
     })
     .addCase(registrationQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === "Successfull registration"){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // LOGIN
     .addCase(logInQuery.pending, (state, action) => {
@@ -153,15 +153,13 @@ const AuthSlice = createSlice({
     })
     .addCase(logInQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload.message === "Tokens gained"){
-        state.message = action.payload.message
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.loggedIn = true
         state.user = action.payload.user
         saveAuthDataHook(state)
       }else{
-        state.error = action.payload
-        state.message = null
         state.loggedIn = false
         state.user = {
           username:null,
@@ -178,15 +176,13 @@ const AuthSlice = createSlice({
     })
     .addCase(tokenQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload.message === "Tokens gained"){
-        state.message = action.payload.message
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.loggedIn = true
         state.user = action.payload.user
         saveAuthDataHook(state)
       }else{
-        state.error = action.payload
-        state.message = null
         state.loggedIn = false
         state.user = {
           username:null,
@@ -203,14 +199,16 @@ const AuthSlice = createSlice({
     })
     .addCase(logoutQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === "Tokens cleared"){
-        state.message = action.payload
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.loggedIn = false
+        state.user={
+          username:null,
+          asAdmin:false
+        }
         saveAuthDataHook()
       }else{
-        state.error = action.payload
-        state.message = null
         state.loggedIn = true
         saveAuthDataHook()
       }
@@ -224,13 +222,8 @@ const AuthSlice = createSlice({
     })
     .addCase(makeAdminQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === `User is now admin`){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // REMOVE ADMIN
     .addCase(removeAdminQuery.pending, (state, action) => {
@@ -240,13 +233,8 @@ const AuthSlice = createSlice({
     })
     .addCase(removeAdminQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === `User is now admin`){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // BAN 
     .addCase(banQuery.pending, (state, action) => {
@@ -256,13 +244,8 @@ const AuthSlice = createSlice({
     })
     .addCase(banQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === `User is now admin`){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // CREATE ROLE
     .addCase(createRoleQuery.pending, (state) => {
@@ -272,13 +255,8 @@ const AuthSlice = createSlice({
     })
     .addCase(createRoleQuery.fulfilled, (state, action) => {
       state.loading = false;
-      if (action.payload.message === "Role created successfully") {
-        state.message = action.payload.message;
-        state.error = null;
-      } else {
-        state.error = action.payload.message;
-        state.message = null;
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // DELETE ROLE
     .addCase(deleteRoleQuery.pending, (state) => {
@@ -288,13 +266,8 @@ const AuthSlice = createSlice({
     })
     .addCase(deleteRoleQuery.fulfilled, (state, action) => {
       state.loading = false;
-      if (action.payload.message === "Role deleted successfully") {
-        state.message = action.payload.message;
-        state.error = null;
-      } else {
-        state.error = action.payload.message;
-        state.message = null;
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
   }
 })

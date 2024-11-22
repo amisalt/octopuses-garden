@@ -1,34 +1,56 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import "./AuthPage.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { logInQuery, logoutQuery, makeAdminQuery, saveAuthData } from '../../app/store/slices/AuthSlice'
-import { MyLoader } from '../../components/informationals/Loader/MyLoader'
+import { logInQuery, registrationQuery } from '../../app/store/slices/AuthSlice'
+import { MyProgressLinearInDeterminate } from '../../components/informationals/ProgressBar/MyProgress'
+import logo from "../../static/images/logo.png"
+import { MyButton } from '../../components/inputControls/MyButton/MyButton'
+import { MyInput } from '../../components/inputControls/MyInput/MyInput'
+import { MyCheckBoxLabelOnly } from '../../components/inputControls/MyCheckBox/MyCheckBox'
 
 export function AuthPage() {
-  let AuthSliceState = useSelector(state=>state.auth)
   const loading = useSelector(state=>state.auth.loading)
-  const [username,  setUsername] = useState('')
-  const [password,  setPassword] = useState('')
+  const error = useSelector(state=>state.auth.error)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [formTypeLogin, setFormTypeLogin] = useState(true)
   const dispatch = useDispatch()
   async function handleLogInQuery(){
     dispatch(logInQuery({username, password}))
-    dispatch(saveAuthData())
   }
+  async function handleRegistrationQuery(){
+    dispatch(registrationQuery({username, password}))
+    dispatch(logInQuery({username, password}))
+  }
+  function handleOnChangeUsername(value){
+    let newValue = ""
+    for(let i = 0; i<value.length; i++){
+      if(value[i].match(/[0-9a-zA-Z!@#$%^_&*]/gm)) newValue += value[i]
+      console.log(i,value[i], newValue, value);
+    }
+    setUsername(newValue)
+  }
+  function handleOnChangePassword(value){
+    setPassword(value)
+  }
+  function handleFormTypeChange(){
+    setFormTypeLogin(!formTypeLogin)
+  }
+  // TODO make error types in all controllers the same
+  const errorType = useMemo(()=>{
+    // return [error.message]
+  }, [error])
   return (
   <main className='page'>
-    {
-    loading ? (
-      <MyLoader/>
-    ) : (
-      <div className='AuthPage'>
-        <img src="" alt="logo" className='AuthPage-Logo'/>
-        <input value={username}  onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username"/>
-        <input value={password}  onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password'/>
-        <button onClick={handleLogInQuery}>AUUUU</button>
-        <button onClick={()=>dispatch(logoutQuery())}>logout</button>
-      </div>
-    )
-    }
+    <div className='AuthPage'>
+      <img src={logo} alt="logo" className='AuthPage-Logo'/>
+      <h1>Octopuses garden</h1>
+      <MyInput value={username} onChange={(e)=>handleOnChangeUsername(e.target.value)} type="text" placeholder="Username" width="100%"/>
+      <MyInput value={password} onChange={(e)=>handleOnChangePassword(e.target.value)} type="password" placeholder="Password" width="100%"/>
+      <MyButton onClick={()=>formTypeLogin ? handleLogInQuery() : handleRegistrationQuery()} width="100%">{formTypeLogin ? "Log In" : "Create account"}</MyButton>
+      <MyCheckBoxLabelOnly value={formTypeLogin} onChange={handleFormTypeChange} label={{active:"Don't have an account? Create one", inactive:"Already have an account? Log In"}}/>
+    </div>
+    {loading && <MyProgressLinearInDeterminate width="100dvw"/>}
     {/* <p style={{position:"fixed", bottom:0, left:0, wordBreak:"break-all"}}>{JSON.stringify(AuthSliceState)}</p> */}
   </main>
   )
