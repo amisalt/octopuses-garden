@@ -26,7 +26,6 @@ export function AuthPage() {
     let newValue = ""
     for(let i = 0; i<value.length; i++){
       if(value[i].match(/[0-9a-zA-Z!@#$%^_&*]/gm)) newValue += value[i]
-      console.log(i,value[i], newValue, value);
     }
     setUsername(newValue)
   }
@@ -43,12 +42,16 @@ export function AuthPage() {
   return (
   <main className='page'>
     <div className='AuthPage'>
-      <img src={logo} alt="logo" className='AuthPage-Logo'/>
-      <h1>Octopuses garden</h1>
-      <MyInput value={username} onChange={(e)=>handleOnChangeUsername(e.target.value)} type="text" placeholder="Username" width="100%"/>
-      <MyInput value={password} onChange={(e)=>handleOnChangePassword(e.target.value)} type="password" placeholder="Password" width="100%"/>
-      <MyButton onClick={()=>formTypeLogin ? handleLogInQuery() : handleRegistrationQuery()} width="100%">{formTypeLogin ? "Log In" : "Create account"}</MyButton>
-      <MyCheckBoxLabelOnly value={formTypeLogin} onChange={handleFormTypeChange} label={{active:"Don't have an account? Create one", inactive:"Already have an account? Log In"}}/>
+      <section>
+        <img src={logo} alt="logo" className='AuthPage-Logo'/>
+        <h1>Octopuses garden</h1>
+      </section> 
+      <section>
+        <MyInput value={username} onChange={(e)=>handleOnChangeUsername(e.target.value)} type="text" placeholder="Username" width="100%"/>
+        <MyInput value={password} onChange={(e)=>handleOnChangePassword(e.target.value)} type="password" placeholder="Password" width="100%"/>
+        <MyButton onClick={()=>formTypeLogin ? handleLogInQuery() : handleRegistrationQuery()} width="100%">{formTypeLogin ? "Log In" : "Create account"}</MyButton>
+        <MyCheckBoxLabelOnly value={formTypeLogin} onChange={handleFormTypeChange} label={{active:"Don't have an account? Create one", inactive:"Already have an account? Log In"}}/>
+      </section>
     </div>
     {loading && <MyProgressLinearInDeterminate width="100dvw"/>}
     {/* <p style={{position:"fixed", bottom:0, left:0, wordBreak:"break-all"}}>{JSON.stringify(AuthSliceState)}</p> */}

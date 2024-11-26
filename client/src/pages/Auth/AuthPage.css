@@ -11,3 +11,22 @@
   align-items: center;
   gap: 0.5rem;
 }
+.AuthPage > section{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 265px;
+}
+.AuthPage-Logo{
+}
+
+@media screen and (max-height: 700px) and (orientation: landscape) {
+  .AuthPage{
+    flex-direction: row;
+    justify-content: center;
+    gap: 5rem;
+    max-width: none;
+  }
+}
