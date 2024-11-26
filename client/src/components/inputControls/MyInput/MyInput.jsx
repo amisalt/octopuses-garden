@@ -11,7 +11,7 @@ export function MyInput({value, onChange, placeholder, type, width, ...props}) {
   }
   return (
     <div className='MyInputContainer' style={{width}}>
-      <input value={value} onChange={onChange} placeholder={placeholder} type={shownType} {...props} className='MyInput'/>
+      <input value={value} onChange={onChange} placeholder={placeholder} type={shownType} {...props} className='MyInput' changing={type == 'password' ? 'true' : 'false'}/>
       {type=='password' && 
       (<div onClick={handleInputTypeChange} className='RevealHideButton' 
       style={{backgroundImage:`url(${shownType === 'password' ? "":""})`}}>
