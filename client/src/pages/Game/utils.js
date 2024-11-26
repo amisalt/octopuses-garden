@@ -16,10 +16,11 @@ export function makeNewOrderObject(){
   }
   const time = 2000 + overallNumber*1500
   const newOrder = {
-    customerName,
-    food,
-    time,
-    overallNumber
+    customerName:customerName,
+    food:food,
+    foodBackup:food,
+    time:time,
+    overallNumber:overallNumber,
   }
   return newOrder
 }

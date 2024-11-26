@@ -41,12 +41,16 @@
   position: relative;
 }
 .GamePage > .Main > .Controls{
-  height: 10vh;
+  height: 10dvh;
   background-color: var(--font-color);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .GamePage > .Main > .Kitchen > .SideCountertop{
-  width: 10vh;
+  width: 10dvh;
   height: 100%;
   background-color: var(--font-color);
   position: absolute;
@@ -63,7 +67,7 @@
   right: 0;
 }
 .GamePage > .Main > .Kitchen > .SideCountertop > .Inner{
-  height: calc(100% - 10vh);
+  height: calc(100% - 10dvh);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -73,7 +77,7 @@
 }
 .GamePage > .Main > .Kitchen > .TopCountertop{
   height: 10vh;
-  width: calc(100% - 20vh);
+  width: calc(100% - 20dvh);
   background-color: var(--font-color);
   position: absolute;
   top: 0;

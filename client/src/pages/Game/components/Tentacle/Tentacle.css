@@ -1,0 +1,71 @@
+@keyframes tentacle {
+  from{
+    transform: translateY(0);
+  }
+  45%{
+    transform: translateY(150dvh);
+  }
+  55%{
+    transform: translateY(150dvh);
+  }
+  to{
+    transform: translateY(0);
+  }
+}
+@keyframes foodGrab {
+  from{
+    transform: translateY(147.5dvh);
+  }
+  18%{
+    transform: translateY(147.5dvh);
+  }
+  to{
+    transform: translateY(0);
+  }
+}
+@keyframes foodGive {
+  from{
+    transform: translate(0);
+  }
+  18%{
+    transform: translate(0);
+  }
+  to{
+    transform: translateY(147.5dvh);
+  }
+}
+
+.Tentacle{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+  width: 15dvh;
+  position: absolute;
+  /* top: -150dvh; */
+  bottom: 150dvh;
+}
+.Body, .Food{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+  width: 15dvh;
+}
+.Tentacle img, .Tentacle div{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.Tentacle .TentacleStem{
+  background-position: bottom;
+  background-size: contain;
+  background-repeat: repeat-y;
+  height: 100dvh;
+}
+.Food{
+  position: absolute;
+  bottom: 150dvh;
+}

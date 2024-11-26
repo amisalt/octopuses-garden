@@ -1,22 +1,19 @@
 import React, { useMemo, useRef, useState } from 'react'
 import "./Device.css"
 import { MyProgressCircularDeterminate } from '../../../../components/informationals/ProgressBar/MyProgress'
+import { Tentacle } from "../Tentacle/Tentacle"
+import { useDispatch } from 'react-redux'
+import { grabItem } from '../../../../app/store/slices/GamePlayedSlice'
 
-export function Device({food, grabItem, cooldown}) {
+export function Device({food, cooldown, evokerID}) {
+  const dispatch = useDispatch()
   const [ready, setReady] = useState(false)
   const [cookingProgress, setCookingProgress] = useState(0)
-  const deviceBox = useRef(null)
-  const position = useMemo(()=>{
-    if(deviceBox.current){
-      const rect = deviceBox.current.getBoundingClientRect()
-      return [rect.x, rect.y]
-    }
-    return [0,0]
-  }, [deviceBox])
+
   function handleOnClick(){
     console.log(cooldown, ready);
     if(ready || cooldown === 0){
-      grabItem(food, position)
+      dispatch(grabItem({item:food, evoker:evokerID, item:food}))
       setReady(false)
       setCookingProgress(0)
     }else{
@@ -33,12 +30,17 @@ export function Device({food, grabItem, cooldown}) {
       }, cooldown)
     }
   }
+
   return (
-    <div className='Device' ref={deviceBox} onClick={handleOnClick}>
+    <div className='Device' onClick={handleOnClick}>
       <img src={`/api/image/devices/${food}.png`} alt={`${food} device`} className='Main'/>
       { cookingProgress>0 && <div className='Status'>
-        { ready ? (<img src={`/api/image/food/${food}.png`} alt={`cooked ${food}`} className='Cooked'/>) : (<MyProgressCircularDeterminate progress={cookingProgress}/>)}
+        { ready ? 
+        (<img src={`/api/image/food/${food}.png`} alt={`cooked ${food}`} className='Cooked'/>) : 
+        (<MyProgressCircularDeterminate progress={cookingProgress}/>)
+        }
       </div>}
+      <Tentacle evoker={evokerID}/>
     </div>
   )
 }

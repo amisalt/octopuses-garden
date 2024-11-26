@@ -6,6 +6,14 @@ export const cooldowns = {
   "burger":5000,
   "drink":7000
 }
+export const prices = {
+  "salad": 5,
+  "meat": 6,
+  "bun": 3,
+  "fries": 7,
+  "burger": 10,
+  "drink":8
+}
 export const customers = {
   anglerfish:{
     food:["burger","fries","drink"]
@@ -17,10 +25,10 @@ export const customers = {
     food:["burger","drink"]
   },
   pufferfish:{
-    food:["fries","salad","drink"]
+    food:["fries","salad","bun","drink"]
   },
   seabunny:{
-    food:["salad","drink"]
+    food:["salad","bun","drink"]
   }
 }
 export const customersNames = ['anglerfish','conger','shark','pufferfish','seabunny']

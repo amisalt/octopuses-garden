@@ -22,7 +22,7 @@ export function AppContainer({children}) {
     return () => window.removeEventListener('resize', handleResize);
   }, [])
   useEffect(()=>{
-    if(loggedIn) dispatch(tokenQuery())
+    // if(loggedIn) dispatch(tokenQuery())
   }, [loggedIn])
   return (
     <div>
