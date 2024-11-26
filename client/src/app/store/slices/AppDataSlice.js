@@ -3,6 +3,16 @@ import { getAppDataHook } from "../../../hooks/getDataHooks";
 
 const initialState = getAppDataHook()
 
+// {
+//   BGMvolume:1,
+//   SEvolume:1,
+//   gameState:false,
+//   windowDimensions:{
+//     width:0,
+//     height:0
+//   }
+// }
+
 const AppDataSlice = createSlice({
   name:"appData",
   initialState,

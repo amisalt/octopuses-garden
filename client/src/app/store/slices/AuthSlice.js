@@ -85,6 +85,15 @@ export const placeholderQuey = createAsyncThunk(
 )
 
 const authData = getAuthDataHook()
+
+// {
+//   user:{
+//     username:null,
+//     asAdmin:false
+//   },
+//   loggedIn:false
+// }
+
 const initialState = {
   ...authData,
   loading:false,
