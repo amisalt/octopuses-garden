@@ -15,118 +15,183 @@ function generateGameToken(id, start, level){
   return jwt.sign(payload, process.env.SECRET, {algorithm:"HS512"})
 }
 
+async function checkInLeaderboard(gameId, levelId, mode){
+  const leaderboard = (await GamePlayed.find({level:levelId, mode:mode}).sort({xp:-1}).limit(10)).map(game=>game._id)
+  return leaderboard.includes(gameId)
+}
+
 class GamePlayedController{
   async start(req,res){
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Starting game error", errors})
-      }
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
       const level = await Level.findById(req.params.levelId)
       if(!level){
-        return res.status(400).json({message:"Level is not existing"})
+        return res.status(400).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Level ${req.params.levelId} doesn't exist`,
+          path:"level",
+          location:"server"
+        }]})
       }
       const mode = await Mode.findOne({value:req.params.mode.toUpperCase()})
       if(!mode){
-        return res.status(400).json({message:"Mode is not existing"})
+        return res.status(400).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Mode ${req.params.mode.toUpperCase()} doesn't exist`,
+          path:"mode",
+          location:"server"
+        }]})
       }
-      const game = new GamePlayed({start:Date.now(), players:[user._id], level:level._id, mode:mode.value})
+      const game = new GamePlayed({start:Date.now(), players:[req.user.id], level:level._id, mode:mode.value})
       await game.save()
       const gameToken = generateGameToken(game._id, game.start, game.level)
-      return res.status(200).json({message:"Game started and game token gained", gameToken})
+      return res.status(200).json({message:"Success", gameToken, errors:[{
+        type:"server",
+        msg:`Game started and game token gained`,
+        path:"start",
+        location:"server"
+      }]})
     }catch(e){
       console.log(e)
-      return res.status(400).json({message:"Unhandled error", e})
+      return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
   async connect(req,res){
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Connecting to game error", errors})
-      }
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
       const game = await GamePlayed.findById(req.gamePlayed.id)
-      if(!game){
-        return res.status(400).json({message:"Game id is not valid"})
-      }
       const singleMode = await Mode.findOne({value:"SINGLE"})
-      if(game.mode === singleMode.value){
-        return res.status(400).json({message:"Game is single mode, cannot connect to game"})
+      if(!singleMode){
+        return res.status(400).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Mode SINGLE doesn't exist`,
+          path:"mode",
+          location:"server"
+        }]})
       }
-      game.players.push(user._id)
+      if(game.mode === singleMode.value){
+        return res.status(400).json({"message":"Access error", errors:[{
+          type:"game",
+          msg:`SINGLE mode does not support connect function`,
+          path:"mode",
+          location:"game"
+        }]})
+      }
+      game.players.push(req.user.id)
       await game.save()
-      return res.status(200).json({message:"Successfully connected to game"})
+      return res.status(200).json({message:"Success", errors:[{
+        type:"server",
+        msg:`Connected to game`,
+        path:"connect",
+        location:"server"
+      }]})
     }catch(e){
       console.log(e)
-      return res.status(400).json({message:"Unhandled error", e})
+      return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
   async end(req,res){
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Ending game error", errors})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
-      }
-      const gameInfo = await GameInfo.findById(user.gameInfo)
-      if(!gameInfo){
-        return res.status(400).json({message:"User doesn't have game instance yet"})
-      }
+      const gameInfo = await GameInfo.findById(req.user.gameInfo)
       const game = await GamePlayed.findById(req.gamePlayed.id)
-      if(!game){
-        return res.status(400).json({message:"Game id is not valid"})
-      }
-      if(game.players[0] == user._id && req.body.overallTime > 0){
+      if(game.players[0] == req.user.id && req.body.overallTime > 0){
         game.overallTime = req.body.overallTime
         game.xp = req.body.xpOverall
         game.money = req.body.moneyOverall
       }
-      if(!game.gainQueue.includes(user._id)){
-        return res.status(400).json({message:"Game id is not valid for gaining XP and money"})
+      if(!game.gainQueue.includes(req.user.id)){
+        return res.status(400).json({"message":"Access error", errors:[{
+          type:"game",
+          msg:`Game id is not valid for gaining XP and money`,
+          path:"gainQueue",
+          location:"game"
+        }]})
       }
-      game.gainQueue = game.gainQueue.filter(userId=>userId != user._id)
+      game.gainQueue = game.gainQueue.filter(userId=>userId != req.user.id)
       gameInfo.xp = gameInfo.xp + req.body.xp
       gameInfo.money = gameInfo.money + req.body.money
       await game.save()
+      if(!checkInLeaderboard(req.gamePlayed.id, req.gamePlayed.level, req.gamePlayed.mode)){
+        await 
+        game.deleteOne()
+      }
       await gameInfo.save()
-      return res.status(200).json({message:"Progress saved successfully"})
+      return res.status(200).json({message:"Success", errors:[{
+        type:"server",
+        msg:`Progress saved`,
+        path:"end",
+        location:"server"
+      }]})
     }catch(e){
       console.log(e)
-      return res.status(400).json({message:"Unhandled error", e})
+      return res.status(400).json({message:"Unhandled error", errors:e})
+    }
+  }
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  async exit(req,res){
+    try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
+      }
+      const game = await GamePlayed.findById(req.gamePlayed.id)
+      await game.deleteOne()
+      return res.status(200).json({message:"Success", errors:[{
+        type:"server",
+        msg:`Game exited without saving progress`,
+        path:"exit",
+        location:"server"
+      }]})
+    }catch(e){
+      console.log(e)
+      return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
   async leaderboardByLevel(req,res){
     try{
       const errors = validationResult(req)
       if(!errors.isEmpty()){
-        return res.status(400).json({message:"Getting leaderboard error", errors})
-      }
-      const {id} = req.user
-      const user = await User.findById(id)
-      if(!user){
-        return res.status(400).json({message:`User is not existing`})
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
       const level = await Level.findById(req.params.levelId)
       if(!level){
-        return res.status(400).json({message:"Level is not existing"})
+        return res.status(400).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Level ${req.params.levelId} doesn't exist`,
+          path:"level",
+          location:"server"
+        }]})
       }
       const mode = await Mode.findOne({value:req.params.mode})
       if(!mode){
-        return res.status(400).json({message:"Mode is not existing"})
+        return res.status(400).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Mode ${req.params.mode} doesn't exist`,
+          path:"mode",
+          location:"server"
+        }]})
       }
       const gamesSearchQuery = await GamePlayed.find({level:level._id, mode:mode.value}).sort({xp:-1}).limit(10)
       const games = gamesSearchQuery.map(async(game)=>{
@@ -143,68 +208,77 @@ class GamePlayedController{
         }
         return newGameObject
       })
-      return res.status(200).json({message:"Leaderboard gained successfully", leaderboard})
+      return res.status(200).json({message:"Success", leaderboard:games, errors:[{
+        type:"server",
+        msg:`Leaderboard of ${req.params.levelId} ${req.params.mode} mode gained`,
+        path:"leaderboardByLevel",
+        location:"server"
+      }]})
     }catch(e){
       console.log(e)
-      return res.status(400).json({message:"Unhandled error", e})
+      return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
   async createMode(req, res) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Creating mode error", errors });
-      }
-      const { id } = req.user;
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(400).json({ message: "User is not existing" });
+        return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
       const { value } = req.body;
       const modeValue = value.toUpperCase();
-      const existingMode = await GameMode.findOne({ value: modeValue });
+      const existingMode = await Mode.findOne({ value: modeValue });
       if (existingMode) {
-        return res.status(400).json({ message: "Mode already exists" });
+        return res.status(400).json({message:"Existance error", errors:[{
+          "type": "field",
+          "msg": "Mode with such name already exists",
+          "path": "value",
+          "location": "body"
+        }]});
       }
-      const newMode = new GameMode({
+      const newMode = new Mode({
         value: modeValue
       });
       await newMode.save();
-      return res.status(200).json({ message: "Game mode created successfully", mode: newMode });
+      return res.status(200).json({ message: "Success", mode: newMode, errors:[{
+        type:"server",
+        msg:`Mode ${modeValue} created`,
+        path:"createMode",
+        location:"server"
+      }] });
     } catch (e) {
       console.error(e);
-      return res.status(400).json({ message: "Unhandled error", e });
+      return res.status(400).json({ message: "Unhandled error", errors:e });
     }
   }
   async deleteMode(req, res) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Deleting mode error", errors });
-      }
-      const { id } = req.user;
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(400).json({ message: "User is not existing" });
+        return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
       const { value } = req.body;
       const modeValue = value.toUpperCase();
-      const mode = await GameMode.findOne({ value: modeValue });
+      const mode = await Mode.findOne({ value: modeValue });
       if (!mode) {
-        return res.status(404).json({ message: "Mode not found" });
+        return res.status(404).json({message:`Nonexistance error`, errors:[{
+          type:"server",
+          msg:`Mode ${modeValue} doesn't exist`,
+          path:"mode",
+          location:"server"
+        }]});
       }
-      const gamesWithMode = await GamePlayed.find({ mode: modeValue });
-      if (gamesWithMode.length > 0) {
-        return res.status(400).json({ 
-          message: "Cannot delete mode. It is being used in existing games.",
-          gamesCount: gamesWithMode.length
-        });
-      }
-      await GameMode.findByIdAndDelete(mode._id);
-      return res.status(200).json({ message: "Game mode deleted successfully",deletedMode: modeValue});
+      await GamePlayed.deleteMany({ mode: modeValue });
+      await Mode.findByIdAndDelete(mode._id);
+      return res.status(200).json({ message: "Success",deletedMode: modeValue, errors:[{
+        type:"server",
+        msg:`Mode ${modeValue} deleted`,
+        path:"createMode",
+        location:"server"
+      }]});
     } catch (e) {
       console.error(e);
-      return res.status(400).json({ message: "Unhandled error", e });
+      return res.status(400).json({ message: "Unhandled error", errors:e });
     }
   }
 }
