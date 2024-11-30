@@ -1,6 +1,26 @@
 .MyInputContainer{
   height:auto;
   position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .1rem;
+}
+.MyInputContainer section{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+.MyInputContainer .MyInputLabel{
+  font-size: var(--font-size-big);
+  color: var(--font-color);
+  align-self: flex-start;
+  text-align: left;
+  margin: 0;
 }
 .MyInput{
   font-family: "Jersey 25", sans-serif;
@@ -8,7 +28,7 @@
   font-weight: var(--font-weight);
   color: var(--font-color);
   background-color: var(--bg-color-black);
-  border: 3px solid var(--accent-color-blue);
+  border: 3px solid var(--font-color);
   padding: 0.5rem;
   box-sizing: border-box;
   text-align: center;
@@ -30,10 +50,30 @@
   background-color: var(--accent-color-blue);
   color: var(--bg-color-black);
 }
-.MyInputContainer > .RevealHideButton{
+.MyInputContainer .RevealHideButton{
   height: 40px;
   width: 40px;
   position: absolute;
   right: 0.5rem;
-  top: calc(50% - 20px);
+  bottom: calc(50% - 20px);
+}
+.MyInputContainer.Transparent .MyInputLabel{
+  color: var(--bg-color-violet);
+}
+.MyInputContainer.Transparent .MyInput{
+  background-color: transparent;
+  border:0;
+  border-bottom: 3px solid var(--bg-color-violet);
+  color: var(--bg-color-violet);
+}
+.MyInputContainer.Transparent .MyInput:active{
+  background-color: transparent;
+  border: 3px solid var(--bg-color-violet);
+  color: var(--bg-color-violet);
+}
+.MyInputContainer.Transparent .MyInput:focus-visible{
+  outline: 0;
+  background-color: transparent;
+  border: 3px solid var(--bg-color-violet);
+  color: var(--bg-color-violet);
 }

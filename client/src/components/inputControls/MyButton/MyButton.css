@@ -4,17 +4,62 @@
   font-weight: var(--font-weight);
   color: var(--font-color);
   background-color: var(--accent-color-blue);
-  border: 0;
+  border: 3px solid var(--font-color);
   padding: 0.5rem;
   box-sizing: border-box;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .MyButton:active{
-  background-color: var(--accent-color-blue);
-  color: var(--bg-color-black);
+  color: var(--accent-color-blue);
+  background-color: var(--font-color);
+  border-color: var(--accent-color-blue);
 }
 .MyButton:focus-visible{
   outline: 0;
-  background-color: var(--accent-color-blue);
-  color: var(--bg-color-black);
+  color: var(--accent-color-blue);
+  background-color: var(--font-color);
+  border-color: var(--accent-color-blue);
+}
+
+.MyButton.Violet{
+  color: var(--bg-color-violet);
+  background-color: var(--accent-color-pink);
+  border: 3px solid var(--bg-color-violet);
+}
+.MyButton.Violet:active{
+  background-color: var(--bg-color-violet);
+  color: var(--font-color);
+  border-color: var(--font-color);
+}
+.MyButton.Violet:focus-visible{
+  background-color: var(--bg-color-violet);
+  color: var(--font-color);
+  border-color: var(--font-color);
+}
+
+.MyButton.Game{
+  color: var(--bg-color-violet);
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+}
+.MyButton.Game:active{
+  color: var(--font-color);
+}
+.MyButton.Game:focus-visible{
+  color: var(--font-color);
+}
+
+.MyButton .Link{
+  text-decoration: none;
+  color: var(--bg-color-violet);
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }

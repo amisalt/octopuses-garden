@@ -1,0 +1,23 @@
+.MySliderContainer{
+  height:auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .1rem;
+}
+.MySliderContainer > section{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.MySliderContainer .MySliderLabel{
+  font-size: var(--font-size-big);
+  color: var(--bg-color-violet);
+  align-self: flex-start;
+  text-align: left;
+  margin: 0;
+}
