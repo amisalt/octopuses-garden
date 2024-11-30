@@ -47,3 +47,9 @@
   width: var(--font-size-medium);
   height: var(--font-size-medium);
 }
+.TentacleControls .TentacleActionButton:active{
+  color: var(--font-color);
+}
+.TentacleControls .TentacleActionButton:focus-visible{
+  color: var(--font-color);
+}

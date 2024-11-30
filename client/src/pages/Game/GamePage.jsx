@@ -10,7 +10,7 @@ import { Controls } from './Controls'
 import { MyProgressLinearInDeterminate } from '../../components/informationals/ProgressBar/MyProgress'
 
 import { setGameState } from '../../app/store/slices/AppDataSlice'
-import { setBonuses, setInitialState, setPrices } from '../../app/store/slices/GamePlayedSlice'
+import { setBonuses, setPause, setPrices } from '../../app/store/slices/GamePlayedSlice'
 
 export function GamePage() {
   const dispatch = useDispatch()
@@ -23,16 +23,31 @@ export function GamePage() {
   const {levelId} = useParams()
   // * - - - - - - - - - - - - - - - - DEALING WITH PAGE RELOAD - - - - - - - - - - - - - - - -
   useEffect(()=>{
-    dispatch(setInitialState())
+    dispatch(setPause(false))
     dispatch(setBonuses({levels, levelId}))
     dispatch(setPrices())
   }, [])
+  // * - - - - - - - - - - - - - - - - DEALING WITH PAUSE - - - - - - - - - - - - - - - -
+  const pause = useSelector(state=>state.game.pause)
+  const [modal, setModal] = useState(false)
+  function hideModal(e){
+    if(pause && (!document.getElementById('SettingsModal').contains(e.target) || document.getElementById('SettingsModalButton') == e.target)){
+      setModal(false)
+      dispatch(setPause(false))
+    }
+  }
+  function showModal(){
+    if(!pause){
+      dispatch(setPause(true))
+      setModal(true)
+    }
+  }
   // * - - - - - - - - - - - - - - - - GAME CYCLE - - - - - - - - - - - - - - - -
   return (
-    <main className='page' style={{padding:0}}>
+    <main className='page' style={{padding:0}} onClick={(e)=>hideModal(e)}>
       <div className='GamePage'>
         <section className='Main'>
-          <Menu/>
+          <Menu hideModal={hideModal} showModal={showModal} modal={modal}/>
           <Clients levelId={levelId}/>
           <Kitchen levelId={levelId}/>
           <Controls levelId={levelId}/>

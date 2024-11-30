@@ -29,6 +29,15 @@
 .GamePage > .Main > div{
   width:100%;
 }
+.GamePage > .Main > .Menu{
+  height: 7dvh;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding: 2%;
+  box-sizing: border-box;
+}
 .GamePage > .Main > .Clients{
   height: 30%;
   display: grid;
@@ -45,8 +54,23 @@
   background-color: var(--font-color);
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
+  gap: .1rem;
   align-items: center;
+}
+
+.GamePage > .Main > .Menu > .MoneyDisplay{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: .2rem;
+  font-size: var(--font-size-big);
+}
+.GamePage > .Main > .Menu .CoinImg{
+  height: 5dvh;
+  width: 5dvh;
 }
 
 .GamePage > .Main > .Kitchen > .SideCountertop{

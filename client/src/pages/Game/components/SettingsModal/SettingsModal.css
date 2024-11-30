@@ -1,0 +1,22 @@
+.SettingsModal{
+  position: absolute;
+  width: 310px;
+  padding: 5% 2%;
+  background-color: var(--accent-color-pink);
+  border: .5rem solid var(--bg-color-violet);
+  box-sizing: border-box;
+  left: calc(50% - 155px);
+  top: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2000;
+}
+.SettingsModal[show='true']{
+  display: flex;
+}
+.SettingsModal[show='false']{
+  display: none;
+}

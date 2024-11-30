@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { buyTentacle, changeActiveTentacle, removeHoldItem } from '../../../../app/store/slices/GamePlayedSlice'
 import "./TentacleControls.css"
-import coinImg from "../../../../static/images/coin.svg"
+import coinImg from "../../../../static/images/coinBlack.svg"
 
 export function TentacleControls({index}) {
   const dispatch = useDispatch()
