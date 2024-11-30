@@ -25,10 +25,28 @@ export function getAuthDataHook(){
   }
 }
 
+export function getGameInfoDataHook(){
+  const gameInfoData = localStorage.getItem("gameInfoData")
+  if(gameInfoData) return JSON.parse(gameInfoData)
+  return {
+    stats:{
+      xp:null,
+      money:null,
+      upgrades:[]
+    },
+    availableUpgrades:[],
+    levels:{
+      availableLevels:[{_id:'8', priceBonus:1, xpBonus:1}],
+      unavailableLevels:[]
+    }
+  }
+}
+
 export function getGameDataHook(){
   const gameData = localStorage.getItem("gameData")
   if(gameData) return JSON.parse(gameData)
   return {
+    pause:true,
     priceBonus:1,
     xpBonus:1,
     orders:[],
@@ -71,7 +89,16 @@ export function getGameDataHook(){
     xpOverall:0,
     moneyOverall:500000,
     xp:0,
-    money:500000
+    money:500000,
+    overallTime:0
+  }
+}
+
+export function getLeaderboardDataHook(){
+  const leaderboardData = localStorage.getItem('leaderboardData')
+  if(leaderboardData) return JSON.parse(leaderboardData)
+  return {
+    leaderboard:{}
   }
 }
 
@@ -87,8 +114,17 @@ export function saveAuthDataHook(state){
   localStorage.setItem("authData", JSON.stringify(authData))
 }
 
+export function saveGameInfoDataHook(state){
+  const gameInfoData = {
+    stats:state.stats,
+    availableUpgrades:state.availableUpgrades,
+    levels:state.levels
+  }
+}
+
 export function saveGameDataHook(state){
   const gameData = {
+    pause:state.pause,
     priceBonus:state.priceBonus,
     xpBonus: state.xpBonus,
     orders:state.orders,
@@ -103,6 +139,10 @@ export function saveGameDataHook(state){
   localStorage.setItem('gameData', JSON.stringify(gameData))
 }
 
-export function removeGameDataHook(state){
+export function removeGameDataHook(){
   localStorage.removeItem('gameData')
+}
+
+export function saveLeaderboardDataHook(state){
+  localStorage.setItem('leaderboardData', JSON.stringify(state.leaderboard))
 }
