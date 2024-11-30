@@ -1,12 +1,13 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
+import { getGameInfoDataHook } from "../../../hooks/getDataHooks";
 axios.defaults.withCredentials = true;
 
 export const createGameQuery = createAsyncThunk(
   "gameInfo/createGameQuery",
   async()=>{
     const response = await axios.get("/api/gameInfo/createGame").then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -22,7 +23,7 @@ export const buyUpgradeQuery = createAsyncThunk(
   "gameInfo/buyUpgrade",
   async(upgradeId)=>{
     const response = await axios.get(`/api/gameInfo/buyUpgrade/${upgradeId}`).then(res=>res.data).catch(error=>error.response.data)
-    return response.message
+    return response
   }
 )
 
@@ -53,7 +54,7 @@ export const createLevelQuery = createAsyncThunk(
       xpBonus,
       xpRequired
     }).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 );
 
@@ -61,7 +62,7 @@ export const deleteLevelQuery = createAsyncThunk(
   'gameInfo/deleteLevel',
   async (levelId) => {
     const response = await axios.post('/api/gameInfo/deleteLevel', {levelId}).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 )
 
@@ -79,7 +80,7 @@ export const createUpgradeQuery = createAsyncThunk(
       class: upgradeClass,
       classLevel
     }).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 );
 
@@ -87,61 +88,58 @@ export const deleteUpgradeQuery = createAsyncThunk(
   'gameInfo/deleteUpgrade',
   async (upgradeId) => {
     const response = await axios.post('/api/gameInfo/deleteUpgrade', {upgradeId}).then(res => res.data).catch(error => error.response.data);
-    return response.message;
+    return response;
   }
 )
+
+const gameInfoData = getGameInfoDataHook()
+// {
+//   stats:{
+//     xp:null,
+//     money:null,
+//     upgrades:[]
+//   },
+//   availableUpgrades:[],
+//   levels:{
+//     availableLevels:[{_id:'8', priceBonus:1, xpBonus:1}],
+//     unavailableLevels:[]
+//   }
+// }
 
 const GameInfoSlice = createSlice({
   name:"gameInfo",
   initialState:{
     loading:false,
-    error:null,
+    errors:null,
     message:null,
-    stats:{
-      xp:null,
-      money:null,
-      upgrades:[]
-    },
-    availableUpgrades:[],
-    levels:{
-      availableLevels:[{_id:"8",priceBonus:1,xpBonus:1}],
-      unavailableLevels:[]
-    }
+    ...gameInfoData
   },
   extraReducers:(builder)=>{
     builder
     // CREATE GAME
     .addCase(createGameQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(createGameQuery.fulfilled, (state,action)=>{
       state.loading = false
-      state.error = null
-      if(["Game instance already exists", "Game instance successfully created"].includes(action.payload)){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // STATS
     .addCase(statsQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(statsQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload.message === "Stats gained successfully"){
-        state.message = action.payload.message
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.stats = action.payload.stats
       }else{
-        state.error = action.payload.message
-        state.message = null
         state.stats = {
           xp:null,
           money:null,
@@ -152,53 +150,44 @@ const GameInfoSlice = createSlice({
     // BUY UPGRADE
     .addCase(buyUpgradeQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(buyUpgradeQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload === "Upgrade bought successfully"){
-        state.message = action.payload
-        state.error = null
-      }else{
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // AVAILABLE UPGRADES
     .addCase(availableUpgradesQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(availableUpgradesQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload.message === "Available upgrades list gained"){
-        state.message = action.payload.message
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.availableUpgrades = action.payload.availableUpgradesList
       }else{
-        state.error = action.payload.message
-        state.message = null
         state.availableUpgrades = []
       }
     })
     // AVAILABLE LEVELS
     .addCase(availableLevelsQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(availableLevelsQuery.fulfilled, (state,action)=>{
       state.loading = false
-      if(action.payload.message === "Levels lists gained"){
-        state.message = action.payload.message
-        state.error = null
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
         state.levels.availableLevels = action.payload.availableLevelsList
         state.levels.unavailableLevels = action.payload.unavailableLevelsList
       }else{
-        state.error = action.payload.message
-        state.message = null
         state.levels.availableLevels = []
         state.levels.unavailableLevels = []
       }
@@ -206,66 +195,46 @@ const GameInfoSlice = createSlice({
     // CREATE LEVEL
     .addCase(createLevelQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(createLevelQuery.fulfilled, (state, action) => {
       state.loading = false
-      if(action.payload === "Level created") {
-        state.message = action.payload
-        state.error = null
-      } else {
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // DELETE LEVEL 
     .addCase(deleteLevelQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(deleteLevelQuery.fulfilled, (state, action) => {
       state.loading = false
-      if(action.payload === "Level deleted successfully") {
-        state.message = action.payload
-        state.error = null
-      } else {
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // CREATE UPGRADE
     .addCase(createUpgradeQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(createUpgradeQuery.fulfilled, (state, action) => {
       state.loading = false
-      if(action.payload === "Upgrade created successfully") {
-        state.message = action.payload
-        state.error = null
-      } else {
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
     // DELETE UPGRADE
     .addCase(deleteUpgradeQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(deleteUpgradeQuery.fulfilled, (state, action) => {
       state.loading = false
-      if(action.payload === "Upgrade deleted successfully") {
-        state.message = action.payload
-        state.error = null
-      } else {
-        state.error = action.payload
-        state.message = null
-      }
+      state.message = action.payload.message
+      state.errors = action.payload.errors
     })
   }
 })
