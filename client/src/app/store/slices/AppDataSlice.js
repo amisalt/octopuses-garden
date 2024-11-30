@@ -18,10 +18,10 @@ const AppDataSlice = createSlice({
   initialState,
   reducers:{
     changeBGMvolume:(state,action)=>{
-      if(Number(n) === +n && n%1 !== 0) state.BGMvolume = action.payload
+      if(Number(action.payload) === +action.payload && action.payload%1 !== 0) state.BGMvolume = action.payload
     },
     changeSEvolume:(state,action)=>{
-      if(Number(n) === +n && n%1 !== 0) state.SEvolume = action.payload
+      if(Number(action.payload) === +action.payload && action.payload%1 !== 0) state.SEvolume = action.payload
     },
     setGameState:(state,action)=>{
       if(typeof action.payload === "boolean") state.gameState = action.payload

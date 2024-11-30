@@ -11,10 +11,8 @@ export function AppContainer({children}) {
   const dispatch = useDispatch()
   const loggedIn = useSelector(state=>state.auth.loggedIn)
   useEffect(()=>{
-    console.log(loggedIn);
     dispatch(getAppData())
     dispatch(getAuthData())
-    console.log(loggedIn);
     function handleResize() {
       dispatch(setWindowDimensions(getWindowDimensions()))
     }
