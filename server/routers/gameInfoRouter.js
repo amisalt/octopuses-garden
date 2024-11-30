@@ -4,6 +4,7 @@ const controller = require("../controllers/GameInfoController")
 const {param, cookie, body} = require("express-validator")
 const rolesMiddleware = require("../middlewares/rolesMiddleware")
 const authMiddleware = require("../middlewares/authMiddleware")
+const gameInfoMiddleware = require("../middlewares/gameInfoMiddleware")
 
 router.get("/createGame", [
   cookie("token", "Empty token or is not JWT").isJWT(),
@@ -14,6 +15,7 @@ router.get("/createGame", [
 router.get("/stats", [
   cookie("token", "Empty token or is not JWT").isJWT(),
   authMiddleware,
+  gameInfoMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.stats)
 // *Upgrade id in params
@@ -21,12 +23,14 @@ router.get("/buyUpgrade/:id", [
   cookie("token", "Empty token or is not JWT").isJWT(),
   param("id", "Empty upgrade id or is not mongo ID").isMongoId(),
   authMiddleware,
+  gameInfoMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.buyUpgrade)
 // ? getting available upgrades list of objects
 router.get("/availableUpgrades", [
   cookie("token", "Empty token or is not JWT").isJWT(),
   authMiddleware,
+  gameInfoMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.availableUpgrades)
 // ? getting object 
@@ -37,6 +41,7 @@ router.get("/availableUpgrades", [
 router.get("/availableLevels", [
   cookie("token", "Empty token or is not JWT").isJWT(),
   authMiddleware,
+  gameInfoMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.availableLevels)
 // * body: name, description, priceBonus, xpBonus, xpRequired
