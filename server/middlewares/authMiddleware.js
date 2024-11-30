@@ -8,17 +8,8 @@ module.exports = async function(req,res,next){
   }
   try{
     const {token} = req.cookies
-    if(!token){
-      return res.status(403).json({"message":"Access error", errors:[{
-        type:"user",
-        msg:"Unauthorized user",
-        path:"token",
-        location:"user"
-      }]})
-    }
     const decodedData = jwt.verify(token, process.env.SECRET)
-    req.user = decodedData
-    const {id} = req.user
+    const {id} = decodedData
     const user = await User.findById(id)
     if(!user){
       return res.status(400).json({message:`Nonexistance error`, errors:[{
@@ -27,6 +18,12 @@ module.exports = async function(req,res,next){
         path:"token",
         location:"user"
       }]})
+    }
+    req.user = {
+      id: user._id,
+      username: user.username,
+      roles:user.roles,
+      gameInfo:user.gameInfo
     }
     next()
   }catch(e){

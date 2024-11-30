@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+const GamePlayed = require("../models/GamePlayed")
 
-module.exports = function(req, res, next){
+module.exports = async function(req, res, next){
   if(req.method === "OPTIONS"){
     next()
   }
@@ -10,13 +11,26 @@ module.exports = function(req, res, next){
     if(!gameToken){
       return res.status(403).json({message:`Nonexistance error`, errors:[{
         type:"game",
-        msg:"Game session does not exist",
+        msg:"Invalid gameToken",
         path:"authgame",
         location:"game"
       }]})
     }
     const decodedData = jwt.verify(gameToken, process.env.SECRET)
-    req.gamePlayed = decodedData
+    const game = await GamePlayed.findById(decodedData.id)
+    if(!game){
+      return res.status(403).json({message:`Nonexistance error`, errors:[{
+        type:"game",
+        msg:"Game session does not exist",
+        path:"authgame",
+        location:"game"
+      }]})
+    }
+    req.gamePlayed = {
+      id:game._id,
+      level:game.level,
+      mode:game.mode
+    }
     next()
   }catch(e){
     console.log(e);

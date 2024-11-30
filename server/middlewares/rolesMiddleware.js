@@ -8,16 +8,7 @@ module.exports = function(roles){
       next()
     }
     try{
-      const {token} = req.cookies
-      if(!token){
-        return res.status(403).json({"message":"Access error", errors:[{
-          type:"user",
-          msg:"Unauthorized user",
-          path:"token",
-          location:"user"
-        }]})
-      }
-      const {roles: userRoles} = jwt.verify(token, process.env.SECRET)
+      const userRoles = req.user.roles
       let hasRole = false
       userRoles.forEach(role => {
         if(roles.includes(role)){
