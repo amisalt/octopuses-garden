@@ -46,7 +46,15 @@ class GameInfoController{
           location:"server"
         }]})
       }
-      const upgrades = []
+      const upgrades = {
+        "salad": {},
+        "meat": {},
+        'meatC': {},
+        "bun": {},
+        "fries": {},
+        "burger": {},
+        "drink":{}
+      }
       for(let upgradeId of gameInfo.upgrades){
         const upgrade = await Upgrade.findById(upgradeId)
         if(!upgrade){
@@ -57,12 +65,12 @@ class GameInfoController{
             location:"server"
           }]})
         }
-        upgrades.push(upgrade.toObject())
+        upgrades[upgrade.device][upgrade.quality] = upgrade.toObject()
       }
       const gameInfoObject = {
         xp:gameInfo.xp,
         money:gameInfo.money,
-        upgrades
+        upgrades:upgrades
       }
       return res.status(200).json({message:"Success", stats:gameInfoObject, errors:[{
         type:"server",

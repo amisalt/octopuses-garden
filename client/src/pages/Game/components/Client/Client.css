@@ -1,0 +1,56 @@
+@keyframes clientCome {
+  from{
+    transform: translateX(-150dvw);
+  }
+  to{
+    transform: translateX(0);
+  }
+}
+@keyframes clientLeave {
+  from{
+    transform: translateX(0);
+  }
+  to{
+    transform: translateX(150dvw);
+  }
+}
+
+
+.Client{
+  height: 16dvh;
+  position: absolute;
+  bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.Client img{
+  height: 100%;
+}
+.Client .OrderInfo{
+  height: 16dvh;
+  width: 16dvh;
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  grid-template-rows: repeat(2, 50%);
+  padding: 2%;
+  box-sizing: border-box;
+  background-color: var(--font-color);
+  border-radius: 5px;
+
+}
+.Client .OrderTime{
+  width: 7dvh;
+  height: 7dvh;
+  position: absolute;
+  top: 0;
+  right: calc(16dvh + 1rem);
+}
+.Client:nth-child(1){
+  display: flex;
+}
+.Client:not(:nth-child(1)){
+  display: none;
+}

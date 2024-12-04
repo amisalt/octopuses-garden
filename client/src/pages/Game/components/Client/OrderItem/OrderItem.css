@@ -1,0 +1,21 @@
+.OrderItem{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.OrderItem img{
+  width: 100%;
+}
+.OrderItem .Number{
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;  
+  background-color: var(--accent-color-pink);
+  border-radius: 50%;
+  top: -20%;
+  right: -20%;
+}

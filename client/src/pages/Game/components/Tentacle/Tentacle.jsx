@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import "./Tentacle.css"
 import { setAction } from '../../../../app/store/slices/GamePlayedSlice'
 
-export function Tentacle({evoker}) {
+export function Tentacle({evoker, communicateDevice}) {
   const dispatch = useDispatch()
   const activeIndex= useSelector(state=>state.game.activeIndex)
   const activeTentacle = useSelector(state=>state.game.tentacles[activeIndex])
@@ -13,10 +13,9 @@ export function Tentacle({evoker}) {
   const [sprite, setSprite] = useState("")
   useEffect(()=>{
     if(evoker == action.evoker && action.type){
-      console.log("11111111")
       setSprite(action.type==='grab' ? 'give' : action.type=='give' ? 'grab' : null)
-      setAnimationsTentacle("tentacle 1s ease-in 0s infinite forwards")
-      setAnimationsFood(`${action.type == 'grab' ? 'foodGrab' : action.type=='give' ? 'foodGive' : null} .55s ease-in .45s infinite forwards`)
+      setAnimationsTentacle("tentacle 1s ease-in 0s 1 forwards")
+      setAnimationsFood(`${action.type == 'grab' ? 'foodGive' : action.type=='give' ? 'foodGrab' : null} .55s ease-in .45s 1 forwards`)
       setTimeout(()=>{
         setAnimationsTentacle("none")
         setAnimationsFood('none')
@@ -33,6 +32,9 @@ export function Tentacle({evoker}) {
       }, 550)
     }
   }, [action])
+  useEffect(()=>{
+    communicateDevice(activeTentacle.holdItem)
+  }, [activeTentacle.holdItem])
   return (
     <div className='Tentacle'>
       <div className='Body' style={{animation:animationsTentacle}}>
@@ -44,7 +46,7 @@ export function Tentacle({evoker}) {
         ) : null}
       </div>
       <div className="Food" style={{animation:animationsFood}}>
-        <img src={`/api/image/food/${activeTentacle.holdItem}.png`} alt={activeTentacle.holdItem} className='TentacleGrabItem'/>
+        <img src={`/api/image/food/${action.item}.png`} alt={activeTentacle.holdItem} className='TentacleGrabItem'/>
       </div>
     </div>
   )

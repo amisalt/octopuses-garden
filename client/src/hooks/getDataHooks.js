@@ -20,8 +20,7 @@ export function getAuthDataHook(){
       username:null,
       asAdmin:false
     },
-    // loggedIn:false
-    loggedIn:true
+    loggedIn:false
   }
 }
 
@@ -87,9 +86,9 @@ export function getGameDataHook(){
       item:null
     },
     xpOverall:0,
-    moneyOverall:500000,
+    moneyOverall:0,
     xp:0,
-    money:500000,
+    money:0,
     overallTime:0
   }
 }
@@ -134,13 +133,15 @@ export function saveGameDataHook(state){
     xpOverall:state.xpOverall,
     moneyOverall:state.moneyOverall,
     xp:state.xp,
-    money:state.money
+    money:state.money,
+    overallTime:state.overallTime
   }
   localStorage.setItem('gameData', JSON.stringify(gameData))
 }
 
 export function removeGameDataHook(){
   localStorage.removeItem('gameData')
+  localStorage.removeItem('currentWaitingTime')
 }
 
 export function saveLeaderboardDataHook(state){

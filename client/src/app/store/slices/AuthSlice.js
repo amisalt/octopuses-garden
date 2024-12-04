@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
-import { getAuthDataHook, saveAuthDataHook } from '../../../hooks/getDataHooks';
+import { getAuthDataHook, removeGameDataHook, saveAuthDataHook } from '../../../hooks/getDataHooks';
 axios.defaults.withCredentials = true;
 
 export const registrationQuery = createAsyncThunk(
@@ -191,6 +191,7 @@ const AuthSlice = createSlice({
         state.loggedIn = true
         state.user = action.payload.user
         saveAuthDataHook(state)
+        removeGameDataHook()
       }else{
         state.loggedIn = false
         state.user = {

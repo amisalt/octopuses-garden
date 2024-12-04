@@ -36,6 +36,7 @@ export function AuthPage() {
     setFormTypeLogin(!formTypeLogin)
   }
   // TODO make error types in all controllers the same
+  // TODO make input error show
   const errorType = useMemo(()=>{
     // return [error.message]
   }, [error])
@@ -48,7 +49,7 @@ export function AuthPage() {
       </section> 
       <section>
         <MyInput value={username} onChange={(e)=>handleOnChangeUsername(e.target.value)} type="text" placeholder="^_^" width="100%" label='Username'/>
-        <MyInput value={password} onChange={(e)=>handleOnChangePassword(e.target.value)} type="password" placeholder="(´･ω･`)?" width="100%" label='Password'/>
+        <MyInput value={password} onChange={(e)=>handleOnChangePassword(e.target.value)} type="password" placeholder="(´･ω･`)?" width="100%" label='Password' onKeyDown={(e)=>{}}/>
         <MyButton onClick={()=>formTypeLogin ? handleLogInQuery() : handleRegistrationQuery()} width="100%">{formTypeLogin ? "Log In" : "Create account"}</MyButton>
         <MyCheckBoxLabelOnly value={formTypeLogin} onChange={handleFormTypeChange} label={{active:"Don't have an account? Create one", inactive:"Already have an account? Log In"}}/>
       </section>

@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import "./SettingsModal.css"
 import { Link } from 'react-router-dom'
 import { MyButtonViolet } from '../../../../components/inputControls/MyButton/MyButton'
 import { useDispatch, useSelector } from 'react-redux'
-import { endQuery, exitQuery } from '../../../../app/store/slices/GamePlayedSlice'
+import { endQuery, exitQuery, setPause } from '../../../../app/store/slices/GamePlayedSlice'
 import { statsQuery } from '../../../../app/store/slices/GameInfoSlice'
-import { changeBGMvolume, changeSEvolume } from '../../../../app/store/slices/AppDataSlice'
+import { changeBGMvolume, changeSEvolume, setGameState } from '../../../../app/store/slices/AppDataSlice'
 import { MySliderWithInput } from '../../../../components/inputControls/MySlider/MySlider'
 import { removeGameDataHook } from '../../../../hooks/getDataHooks'
 
@@ -27,12 +27,18 @@ export function SettingsModal({show, hideModal}) {
 
   function handleEndQuery(){
     dispatch(endQuery({xp, money, overallTime, xpOverall, moneyOverall}))
+    dispatch(setGameState(false))
     removeGameDataHook()
   }
   function handleExitQuery(){
     dispatch(exitQuery())
+    dispatch(setGameState(false))
     removeGameDataHook()
   }
+
+  useEffect(()=>{
+    if(show) dispatch(setPause(true))
+  }, [])
 
   return (
     <div className='SettingsModal' id='SettingsModal' show={`${show}`}>

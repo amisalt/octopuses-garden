@@ -10,6 +10,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  overflow: hidden;
 }
 .AuthPage > section{
   display: flex;
@@ -18,8 +19,11 @@
   align-items: center;
   gap: 0.5rem;
   min-width: 265px;
+  height: min-content;
+  width: 100%;
 }
 .AuthPage-Logo{
+  max-width: 50dvw;
 }
 
 @media screen and (max-height: 700px) and (orientation: landscape) {
@@ -28,5 +32,8 @@
     justify-content: center;
     gap: 5rem;
     max-width: none;
+  }
+  .AuthPage > section{
+    width: auto;
   }
 }

@@ -45,6 +45,7 @@
   position: absolute;
   /* top: -150dvh; */
   bottom: 150dvh;
+  z-index: 90000;
 }
 .Body, .Food{
   display: flex;
@@ -67,5 +68,6 @@
 }
 .Food{
   position: absolute;
-  bottom: 150dvh;
+  width: 10dvh;
+  bottom: 0;
 }

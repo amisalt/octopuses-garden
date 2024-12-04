@@ -143,6 +143,10 @@ const GamePlayedSlice = createSlice({
       state.pause = action.payload
       saveGameDataHook(state)
     },
+    addSecond(state){
+      state.overallTime += 1000
+      saveGameDataHook(state)
+    },
     // * {levels, levelId}
     setBonuses(state, action){
       const level = action.payload.levels.find(level=>level._id === action.payload.levelId)
@@ -162,40 +166,43 @@ const GamePlayedSlice = createSlice({
       saveGameDataHook(state)
     },
     makeNewOrder(state){
-      state.orders.push(makeNewOrderObject())
+      if(state.orders.length < 8) state.orders.push(makeNewOrderObject(state.priceBonus))
       saveGameDataHook(state)
     },
-    // * {index(customer), item}
+    // * {id}
+    removeOrder(state, action){
+      console.log("AYOOOOO")
+      state.orders = state.orders.filter((order)=>order.id!==action.payload.id)
+      localStorage.removeItem('currentWaitingTime')
+      saveGameDataHook(state)
+    },
+    // * {item, time, evoker}
     updateOrder(state,action){
       if(!state.action.type){
-        state.tentacles[state.activeIndex].holdItem = null
-        state.action = {
-          type: 'give',
-          evoker: action.payload.index,
-          item: action.payload.item
+        if(action.payload.item){
+          state.tentacles[state.activeIndex].holdItem = null
+          state.action = {
+            type: 'give',
+            evoker: action.payload.evoker,
+            item: action.payload.item
+          }
+          state.orders[0].food[action.payload.item] -= 1
+          state.orders[0].overallNumber -= 1
         }
-        state.orders[action.payload.index].food[action.payload.food] -= 1
-        state.orders[action.payload.index].overallNumber -= 1
         // ? IF THE ORDER IS DONE CALCULATING REVENUE
-        if (state.orders[action.payload.index].overallNumber <= 0){
-          state.orders.splice(action.payload.index,1)
-          const xp = 100*state.xpBonus*(action.payload.time/state.orders[action.payload.index].time)
+        if (state.orders[0].overallNumber <= 0 && action.payload.time > 0){
+          const xp = Math.round(100*state.xpBonus*(action.payload.time/state.orders[0].time))
           state.xp += xp
           state.xpOverall += xp
-          let money = 0
-          const order = state.orders[action.payload.index].foodBackup
-          for(let food in order){
-            money += order[food]*prices[food]*state.priceBonus
-          }
-          state.money += money
-          state.moneyOverall += money
+          state.money += state.orders[0].money
+          state.moneyOverall += state.orders[0].money
         }
         saveGameDataHook(state)
       }
     },
     // * {item, evoker}
     grabItem(state, action){
-      if(!state.tentacles[state.activeIndex].holdItem && !state.action.type){
+      if((!state.tentacles[state.activeIndex].holdItem  || action.payload.item === 'burger')&& !state.action.type){
         state.tentacles[state.activeIndex].holdItem = action.payload.item
         state.action = {
           type: 'give',
@@ -339,5 +346,5 @@ const GamePlayedSlice = createSlice({
   }
 })
 
-export const {setPause, setBonuses, setPrices, setAction, makeNewOrder, updateOrder, grabItem, giveItem, changeActiveTentacle, removeHoldItem, buyTentacle} = GamePlayedSlice.actions
+export const {setPause, addSecond, setBonuses, setPrices, setAction, makeNewOrder, removeOrder, updateOrder, grabItem, giveItem, changeActiveTentacle, removeHoldItem, buyTentacle} = GamePlayedSlice.actions
 export default GamePlayedSlice.reducer
