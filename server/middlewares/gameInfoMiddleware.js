@@ -8,6 +8,7 @@ module.exports = async function(req, res, next){
     next()
   }
   try{
+    console.log(req.user.gameInfo)
     const gameInfo = await GameInfo.findById(req.user.gameInfo)
     if(!gameInfo){
       return res.status(403).json({message:`Nonexistance error`, errors:[{
@@ -20,6 +21,6 @@ module.exports = async function(req, res, next){
     next()
   }catch(e){
     console.log(e);
-    return res.status(400).json({"message":"Unhandled error", errors:e})
+    return res.status(400).json({"message":"Unhandled error", errors:e, gameInfo:req.user.gameInfo})
   }
 }

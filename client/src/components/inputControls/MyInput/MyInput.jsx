@@ -24,9 +24,9 @@ export function MyInput({value, onChange, placeholder, type, width, label, ...pr
   )
 }
 
-export function MyInputTransparent({value, onChange, placeholder, type, width, label, ...props}){
+export function MyInputTransparent({value, onChange, placeholder, type, width, label, colorTheme, ...props}){
   return (
-    <div className='MyInputContainer Transparent' style={{width}}>
+    <div className='MyInputContainer Transparent' style={{width}} colorTheme={colorTheme}>
       <p className='MyInputLabel'>{label}</p>
       <section>
         <input value={value} onChange={onChange} placeholder={placeholder} type={type} {...props} className='MyInput' changing={type == 'password' ? 'true' : 'false'}/>

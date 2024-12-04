@@ -35,7 +35,7 @@ export function getGameInfoDataHook(){
     },
     availableUpgrades:[],
     levels:{
-      availableLevels:[{_id:'8', priceBonus:1, xpBonus:1}],
+      availableLevels:[{_id:'8', priceBonus:1, xpBonus:1, name:'tutorial', mode:'single'}],
       unavailableLevels:[]
     }
   }
@@ -45,7 +45,7 @@ export function getGameDataHook(){
   const gameData = localStorage.getItem("gameData")
   if(gameData) return JSON.parse(gameData)
   return {
-    pause:true,
+    pause:false,
     priceBonus:1,
     xpBonus:1,
     orders:[],

@@ -57,21 +57,21 @@
   right: 0.5rem;
   bottom: calc(50% - 20px);
 }
-.MyInputContainer.Transparent .MyInputLabel{
+.MyInputContainer[colorTheme='game'].Transparent .MyInputLabel{
   color: var(--bg-color-violet);
 }
-.MyInputContainer.Transparent .MyInput{
+.MyInputContainer[colorTheme='game'].Transparent .MyInput{
   background-color: transparent;
   border:0;
   border-bottom: 3px solid var(--bg-color-violet);
   color: var(--bg-color-violet);
 }
-.MyInputContainer.Transparent .MyInput:active{
+.MyInputContainer[colorTheme='game'].Transparent .MyInput:active{
   background-color: transparent;
   border: 3px solid var(--bg-color-violet);
   color: var(--bg-color-violet);
 }
-.MyInputContainer.Transparent .MyInput:focus-visible{
+.MyInputContainer[colorTheme='game'].Transparent .MyInput:focus-visible{
   outline: 0;
   background-color: transparent;
   border: 3px solid var(--bg-color-violet);

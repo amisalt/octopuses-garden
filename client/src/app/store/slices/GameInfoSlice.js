@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
-import { getGameInfoDataHook } from "../../../hooks/getDataHooks";
+import { getGameInfoDataHook, saveGameInfoDataHook } from "../../../hooks/getDataHooks";
 axios.defaults.withCredentials = true;
 
 export const createGameQuery = createAsyncThunk(
@@ -39,6 +39,14 @@ export const availableLevelsQuery = createAsyncThunk(
   "gameInfo/availableLevels",
   async()=>{
     const response = await axios.get(`/api/gameInfo/availableLevels`).then(res=>res.data).catch(error=>error.response.data)
+    return response
+  }
+)
+
+export const allStateStatsQuery = createAsyncThunk(
+  "gameInfo/getAllInfoInStateQuery",
+  async()=>{
+    const responseStats = await axios.get("/api/gameInfo/allStateStats").then(res=>res.data).catch(error=>error.response.data)
     return response
   }
 )
@@ -139,12 +147,14 @@ const GameInfoSlice = createSlice({
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
         state.stats = action.payload.stats
+        saveGameInfoDataHook(state)
       }else{
         state.stats = {
           xp:null,
           money:null,
           upgrades:[]
         }
+        saveGameInfoDataHook(state)
       }
     })
     // BUY UPGRADE
@@ -157,6 +167,7 @@ const GameInfoSlice = createSlice({
       state.loading = false
       state.message = action.payload.message
       state.errors = action.payload.errors
+      saveGameInfoDataHook(state)
     })
     // AVAILABLE UPGRADES
     .addCase(availableUpgradesQuery.pending, (state, action) => {
@@ -170,8 +181,10 @@ const GameInfoSlice = createSlice({
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
         state.availableUpgrades = action.payload.availableUpgradesList
+        saveGameInfoDataHook(state)
       }else{
         state.availableUpgrades = []
+        saveGameInfoDataHook(state)
       }
     })
     // AVAILABLE LEVELS
@@ -187,9 +200,39 @@ const GameInfoSlice = createSlice({
       if(action.payload.message === "Success"){
         state.levels.availableLevels = action.payload.availableLevelsList
         state.levels.unavailableLevels = action.payload.unavailableLevelsList
+        saveGameInfoDataHook(state)
       }else{
         state.levels.availableLevels = []
         state.levels.unavailableLevels = []
+        saveGameInfoDataHook(state)
+      }
+    })
+    // ALL STATE STATS
+    .addCase(allStateStatsQuery.pending, (state, action) => {
+      state.loading = true
+      state.errors = null
+      state.message = null
+    })
+    .addCase(allStateStatsQuery.fulfilled, (state,action)=>{
+      state.loading = false
+      state.message = action.payload.message
+      state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
+        state.stats = action.payload.stats
+        state.availableUpgrades = action.payload.availableUpgradesList
+        state.levels.availableLevels = action.payload.availableLevelsList
+        state.levels.unavailableLevels = action.payload.unavailableLevelsList
+        saveGameInfoDataHook(state)
+      }else{
+        state.stats = {
+          xp:null,
+          money:null,
+          upgrades:[]
+        }
+        state.availableUpgrades = []
+        state.levels.availableLevels = []
+        state.levels.unavailableLevels = []
+        saveGameInfoDataHook(state)
       }
     })
     // CREATE LEVEL

@@ -26,7 +26,7 @@ const theme = createTheme({
   },
 });
 
-export function MySliderWithInput({value, setValue, width, placeholder, label, inputProps, sliderProps}){
+export function MySliderWithInput({value, setValue, width, placeholder, label, inputProps, sliderProps, colorTheme}){
   function handleSliderChange(event, newValue){
     setValue(newValue)
   }
@@ -38,12 +38,12 @@ export function MySliderWithInput({value, setValue, width, placeholder, label, i
   }
   return (
     <div className='MySliderContainer' style={{width}}>
-      <p className='MySliderLabel'>{label}</p>
+      <p className='MySliderLabel' style={{color:colorTheme==='game'?'var(--bg-color-violet)':'var(--font-color)'}}>{label}</p>
       <section>
-        <MyInputTransparent value={value} onChange={(e)=>handleInputChange(e.target.value)} placeholder={placeholder} type='number' width='28%' {...inputProps}/>
+        <MyInputTransparent value={value} onChange={(e)=>handleInputChange(e.target.value)} placeholder={placeholder} type='number' width='28%' {...inputProps} colorTheme={colorTheme}/>
         <Box sx={{width:'68%'}}>
           <ThemeProvider theme={theme}>
-            <Slider value={typeof value === 'number' ? value : 0} onChange={handleSliderChange} color='secondary' {...sliderProps}/>
+            <Slider value={typeof value === 'number' ? value : 0} onChange={handleSliderChange} color={colorTheme==='game'?'secondary':'main'} {...sliderProps}/>
           </ThemeProvider>
         </Box>
       </section>

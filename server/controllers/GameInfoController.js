@@ -38,14 +38,6 @@ class GameInfoController{
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
       const gameInfo = await GameInfo.findById(req.user.gameInfo)
-      if(!gameInfo){
-        return res.status(400).json({message:`Nonexistance error`, errors:[{
-          type:"server",
-          msg:"User doesn't have any gameInstance",
-          path:"gameInfo",
-          location:"server"
-        }]})
-      }
       const upgrades = {
         "salad": {},
         "meat": {},
@@ -53,7 +45,8 @@ class GameInfoController{
         "bun": {},
         "fries": {},
         "burger": {},
-        "drink":{}
+        "drink":{},
+        'client':{}
       }
       for(let upgradeId of gameInfo.upgrades){
         const upgrade = await Upgrade.findById(upgradeId)
@@ -179,6 +172,67 @@ class GameInfoController{
         type:"server",
         msg:`Availbale levels list gained`,
         path:"availableLevels",
+        location:"server"
+      }]})
+    }catch(e){
+      console.error(e);
+      return res.status(400).json({message:"Unhandled error", errors:e})
+    }
+  }
+  async allStateStats(req,res){
+    try{
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+        return res.status(400).json({message:"Validation error", errors:errors.errors})
+      }
+      const gameInfo = await GameInfo.findById(req.user.gameInfo)
+      //*stats
+      const upgrades = {
+        "salad": {},
+        "meat": {},
+        'meatC': {},
+        "bun": {},
+        "fries": {},
+        "burger": {},
+        "drink":{},
+        'client':{}
+      }
+      for(let upgradeId of gameInfo.upgrades){
+        const upgrade = await Upgrade.findById(upgradeId)
+        if(!upgrade){
+          return res.status(400).json({message:`Nonexistance error`, errors:[{
+            type:"server",
+            msg:"Upgrade doesn't exist",
+            path:"uprgrade",
+            location:"server"
+          }]})
+        }
+        upgrades[upgrade.device][upgrade.quality] = upgrade.toObject()
+      }
+      const gameInfoObject = {
+        xp:gameInfo.xp,
+        money:gameInfo.money,
+        upgrades:upgrades
+      }
+      // *upgrades
+      const availableUpgradesList = []
+      const ungainedClassesUpgrades = await Upgrade.find({class:{"$nin":gameInfo.upgradesClasses},classLevel:0})
+      availableUpgradesList.push(...ungainedClassesUpgrades.map(upgrade=>upgrade.toObject()))
+      gameInfo.upgrades.forEach(async (upgradeId)=>{
+        const upgrade = await Upgrade.findById(upgradeId)
+        const upgradeHigherLevel = await Upgrade.find({class:upgrade.class, classLevel:upgrade.classLevel+1})
+        if(upgradeHigherLevel) availableUpgradesList.push(upgradeHigherLevel.toObject())
+      })
+      //* levels
+      const XP = gameInfoObject.xp
+      let availableLevelsList = await Level.find({xpRequired:{"$lte":XP}})
+      availableLevelsList = availableLevelsList.map(level=>level.toObject())
+      let unavailableLevelsList = await Level.find({xpRequired:{"$gt":XP}})
+      unavailableLevelsList = unavailableLevelsList.map(level=>level.toObject())
+      return res.status(200).json({message:"Success", stats:gameInfoObject, availableUpgradesList, availableLevelsList, unavailableLevelsList, errors:[{
+        type:"server",
+        msg:`${req.user.username}'s all state stats gained`,
+        path:"stats",
         location:"server"
       }]})
     }catch(e){

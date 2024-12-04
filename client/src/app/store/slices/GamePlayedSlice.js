@@ -267,6 +267,7 @@ const GamePlayedSlice = createSlice({
       state.message = action.payload.message
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
+        console.log(action.payload.gameToken)
         localStorage.setItem("gameToken", action.payload.gameToken)
       }else{
         localStorage.removeItem("gameToken")

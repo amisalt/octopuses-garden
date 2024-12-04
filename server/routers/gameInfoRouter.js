@@ -44,6 +44,12 @@ router.get("/availableLevels", [
   gameInfoMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.availableLevels)
+router.get('/allStateStats', [
+  cookie("token", "Empty token or is not JWT").isJWT(),
+  authMiddleware,
+  gameInfoMiddleware,
+  rolesMiddleware(["ADMIN","USER"])
+], controller.allStateStats)
 // * body: name, description, priceBonus, xpBonus, xpRequired
 router.post("/createLevel", [
   cookie("token", "Empty token or is not JWT").isJWT(),

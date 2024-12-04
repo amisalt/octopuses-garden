@@ -1,0 +1,60 @@
+.AccountPage{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  height: 100dvh;
+  overflow-y: scroll;
+  padding: 3dvh;
+  box-sizing: border-box;
+  gap: 1.5rem;
+}
+.AccountPage::-webkit-scrollbar{
+  background-color: var(--accent-color-blue);
+  padding: .1rem;
+  box-sizing: border-box;
+}
+.AccountPage::-webkit-scrollbar-thumb{
+  background-color: var(--font-color);
+}
+
+.AccountPage > section{
+  width: 100%;
+  padding: 5% 10%;
+  box-sizing: border-box;
+  border: 3px solid var(--accent-color-blue);
+}
+
+.AccountPage .Name, .AccountPage .Stats{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+.AccountPage .PFP{
+  height: 10dvh;
+}
+.AccountPage .Username{
+  font-size: var(--font-size-big);
+}
+
+.AccountPage .Stats{
+  justify-content: space-between;
+}
+.AccountPage .StatsDisplay{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: .2rem;
+  font-size: var(--font-size-big);
+}
+.AccountPage .StatsDisplay .StatsImg{
+  height: 5dvh;
+  width: 5dvh;
+}

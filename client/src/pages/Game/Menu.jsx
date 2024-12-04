@@ -16,7 +16,7 @@ export function Menu({modal, showModal, hideModal}) {
   const xpDisplay = useMemo(()=>{
     if(xp < 1000) return xp
     return Math.floor(xp/1000) + "k"
-  })
+  }, [xp])
   return (
     <div className='Menu'>
       <MyButtonGame width='5dvh' onClick={showModal}><img src={menu} alt='menu img'/></MyButtonGame>

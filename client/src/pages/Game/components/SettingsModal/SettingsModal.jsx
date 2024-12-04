@@ -43,8 +43,8 @@ export function SettingsModal({show, hideModal}) {
   return (
     <div className='SettingsModal' id='SettingsModal' show={`${show}`}>
       <MyButtonViolet width='100%' onClick={hideModal} id='SettingsModalButton'>Back to game</MyButtonViolet>
-      <MySliderWithInput value={BGMvolumeReactive} setValue={handleChangeBGMvolume} width='90%' label='BGM volume'/>
-      <MySliderWithInput value={SEvolumeReactive} setValue={handleChangeSEvolume} width='90%' label='SE volume'/>
+      <MySliderWithInput value={BGMvolumeReactive} setValue={handleChangeBGMvolume} width='90%' label='BGM volume' colorTheme='game'/>
+      <MySliderWithInput value={SEvolumeReactive} setValue={handleChangeSEvolume} width='90%' label='SE volume' colorTheme='game'/>
       <MyButtonViolet width='100%' onClick={handleExitQuery}><Link to='/account' className='Link'>Exit game</Link></MyButtonViolet>
       <MyButtonViolet width='100%' onClick={handleEndQuery}><Link to='/account' className='Link'>Save & Exit</Link></MyButtonViolet>
     </div>

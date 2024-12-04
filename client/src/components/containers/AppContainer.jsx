@@ -22,7 +22,11 @@ export function AppContainer({children}) {
     return () => window.removeEventListener('resize', handleResize);
   }, [])
   useEffect(()=>{
-    if(loggedIn) dispatch(tokenQuery())
+    if(loggedIn){
+      setInterval(()=>{
+        dispatch(tokenQuery())
+      }, 60*1000)
+    }
   }, [loggedIn])
   const route = useLocation()
   useEffect(()=>{

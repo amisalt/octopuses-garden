@@ -47,8 +47,23 @@ class AuthController{
         }]})
       }
       const user = new User({username, password:hashPassword, roles:[userRole.value]})
+      //*gameInfo instance
+      const gameInfo = new GameInfo()
+      await gameInfo.save()
+      user.gameInfo = gameInfo._id
+      //*logging in
+      const token = generateAccessToken(user._id, user.roles)
+      const refreshToken = generateRefreshToken()
+      user.refreshToken = refreshToken
+      const asAdmin = false
+      const userObject = {
+        username:user.username,
+        asAdmin
+      }
       await user.save();
-      res.status(200).json({message:"Success", errors:[{
+      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
+      .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*1000, httpOnly: true, sameSite:true })
+      res.status(200).json({message:"Success", user:userObject, errors:[{
         type:"server",
         msg:"Registration successful! Welcome aboard!",
         path:"registration",
@@ -112,7 +127,7 @@ class AuthController{
         asAdmin
       }
       res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
-      .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
+      .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*1000, httpOnly: true, sameSite:true })
       return res.status(200).json({message:"Success", asAdmin, user:userObject, errors:[{
         type:"server",
         msg:"Login successful! Welcome back!",

@@ -153,6 +153,18 @@ const AuthSlice = createSlice({
       state.loading = false
       state.message = action.payload.message
       state.errors = action.payload.errors
+      if(action.payload.message === "Success"){
+        state.loggedIn = true
+        state.user = action.payload.user
+        saveAuthDataHook(state)
+      }else{
+        state.loggedIn = false
+        state.user = {
+          username:null,
+          asAdmin:false
+        }
+        saveAuthDataHook(state)
+      }
     })
     // LOGIN
     .addCase(logInQuery.pending, (state, action) => {

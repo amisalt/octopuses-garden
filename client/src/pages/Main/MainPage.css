@@ -1,0 +1,22 @@
+.MainPage{
+  width: 100%;
+  max-width: 500px;
+  padding: 3dvh;
+  /* background-color: var(--accent-color-blue); */
+  
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+.Level{
+  border: 0.3rem solid var(--accent-color-blue);
+  padding: .5rem;
+}
+.Level a{
+  text-decoration: none;
+  color: var(--font-color);
+}

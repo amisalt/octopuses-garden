@@ -7,6 +7,7 @@ import logo from "../../static/images/logo.png"
 import { MyButton } from '../../components/inputControls/MyButton/MyButton'
 import { MyInput } from '../../components/inputControls/MyInput/MyInput'
 import { MyCheckBoxLabelOnly } from '../../components/inputControls/MyCheckBox/MyCheckBox'
+import { createGameQuery } from '../../app/store/slices/GameInfoSlice'
 
 export function AuthPage() {
   const loading = useSelector(state=>state.auth.loading)
@@ -20,7 +21,6 @@ export function AuthPage() {
   }
   async function handleRegistrationQuery(){
     dispatch(registrationQuery({username, password}))
-    dispatch(logInQuery({username, password}))
   }
   function handleOnChangeUsername(value){
     let newValue = ""
