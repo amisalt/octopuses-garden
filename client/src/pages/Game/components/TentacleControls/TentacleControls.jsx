@@ -12,21 +12,18 @@ export function TentacleControls({index}) {
     if(tentacle.holdItem){
       dispatch(removeHoldItem({index:index}))
     }
-    console.log(tentacle)
   }
 
   function handleChangeActiveTentacle(){
     if(!tentacle.active){
       dispatch(changeActiveTentacle({index:index}))
     }
-    console.log(tentacle)
   }
 
   function handleBuyTentacle(){
     if(!tentacle.unlocked){
       dispatch(buyTentacle({index:index}))
     }
-    console.log(tentacle)
   }
 
   return (

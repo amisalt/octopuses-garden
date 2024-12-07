@@ -16,26 +16,14 @@ export function Device({food, cooldown, evokerID}) {
   const cookingTime = cooldown*(upgrades?.cooldown?.upgrade ?? 1)
   
   const [time, setTime] = useState(0)
-  const [deciSecondSignal, setDeciSecondsSignal] = useState(0)
   const [startCookingSignal, setStartCookingSignal] = useState(false)
+  const [cookingInterval, setCookingInterval] = useState(null)
   
   const [holdItemNow, setHoldItem] = useState(null)
 
   function handleOnClick(){
-    console.log(cooldown, ready, cookingTime, holdItemNow);
     if(!action){
-      if(ready || cooldown === 0){
-        if(food === 'bun' && holdItemNow === 'meatC'){
-          dispatch(grabItem({item:'burger', evoker:evokerID}))
-          setReady(false)
-          setCookingProgress(0)
-        }
-        else if(!holdItemNow){
-          dispatch(grabItem({item:food, evoker:evokerID}))
-          setReady(false)
-          setCookingProgress(0)
-        }
-      }else if(!startCookingSignal && cooldown != 0){
+      if(!startCookingSignal && cooldown != 0 && !ready){
         if(food === 'meatC'){
           if(holdItemNow === 'meat'){
             dispatch(giveItem({evoker:evokerID, item:'meat'}))
@@ -44,34 +32,43 @@ export function Device({food, cooldown, evokerID}) {
         }else{
           setStartCookingSignal(true)
         }
-        // setTimeout(()=>{
-        //   clearInterval(deciSeconds)
-        //   setReady(true)
-        // }, cookingTime)
+      }else if(ready || cooldown === 0){
+        if(food === 'bun' && holdItemNow === 'meatC'){
+          dispatch(grabItem({item:'burger', evoker:evokerID}))
+          setReady(false)
+          setCookingProgress(0)
+          setTime(0)
+        }
+        else if(!holdItemNow){
+          dispatch(grabItem({item:food, evoker:evokerID}))
+          setReady(false)
+          setCookingProgress(0)
+          setTime(0)
+        }
       }
     }
   }
   // ! - -  - -- - - - - - - - - - - TIMER -- - - - - - - - -- - - - 
   useEffect(()=>{
-    const deciSeconds = setInterval(timer, 100)
-    function timer(){
-      if(startCookingSignal){
-        setDeciSecondsSignal(Date.now())
-      }else{
-        clearInterval(deciSeconds)
-      }
+    if(startCookingSignal && !pause){
+      setCookingInterval(setInterval(() => {
+        setTime((prev)=>prev+100)
+      }, 100))
+    }else{
+      clearInterval(cookingInterval)
     }
-  }, [startCookingSignal])
+  }, [startCookingSignal, pause])
   useEffect(()=>{
-    if(!pause){
-      setTime(time + 100)
+    if(!pause  && startCookingSignal){
       setCookingProgress(Math.round(time/cookingTime*100))
-      if(time === cookingTime){
+      if(time > cookingTime){
+        console.log('Time excession')
         setReady(true)
         setStartCookingSignal(false)
+        clearInterval(cookingInterval)
       }
     }
-  }, [deciSecondSignal])
+  }, [time, pause])
 
   return (
     <div className='Device' onClick={handleOnClick}>

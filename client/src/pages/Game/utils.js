@@ -35,6 +35,5 @@ export function makeNewOrderObject(priceBonus){
     overallNumber:overallNumber,
     money:money
   }
-  console.log(newOrder)
   return newOrder
 }

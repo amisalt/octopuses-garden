@@ -25,29 +25,30 @@ export function Client({order, index}) {
       waitingTime : waitingTime
   )
   const [deciSecondSignal, setDeciSecondsSignal] = useState(0)
+  const [waitingInterval, setWaitingInterval] = useState(null)
 
   const [animation ,setAnimation] = useState('')
   const [removeDoneFlag, setRemoveDoneFlag] = useState(false)
 
   useEffect(()=>{
-    if(index === 0){
+    if(index === 0 && !pause){
       if(time === waitingTime){
         setAnimation('1s ease-in 0s 1 forwards clientCome')
       }
-      const deciSeconds = setInterval(timer, 100)
-      function timer(){
-        setDeciSecondsSignal(Date.now())
-      }
-      function clearIntervals(){
-        clearInterval(deciSeconds)
-      }
-      return clearIntervals
+      setWaitingInterval(setInterval(()=>{
+        setTime((prev)=>prev-100)
+      },100))
+    }else{
+      clearInterval(waitingInterval)
     }
-  }, [index])
+    function clearIntervals(){
+      clearInterval(waitingInterval)
+    }
+    return clearIntervals
+  }, [index, pause])
   // ! - -  - -- - - - - - - - - - - TIMER -- - - - - - - - -- - - - 
   useEffect(()=>{
     if(index === 0 && !pause){
-      setTime(time-100)
       setWaitingProcess(Math.round(time/waitingTime*100))
       localStorage.setItem('currentWaitingTime', JSON.stringify({time, id: order.id}))
       if(time < 0 && !removeDoneFlag){
@@ -56,9 +57,10 @@ export function Client({order, index}) {
           dispatch(removeOrder({id:order.id}))
         }, 2000)
         setRemoveDoneFlag(true)
+        clearInterval(waitingInterval)
       }
     }
-  }, [deciSecondSignal])
+  }, [time, pause, index])
 
   function handleOnClick(){
     if(!action){
