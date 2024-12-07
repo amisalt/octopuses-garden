@@ -11,13 +11,12 @@ const gameInfoMiddleware = require("../middlewares/gameInfoMiddleware")
 router.get("/start/:levelId/:mode", [
   cookie("token", "Empty token or is not JWT").isJWT(),
   param("levelId", "Not a mongo level Id").isMongoId(),
-  param("mode", "Not uppercase mode param filed").isUppercase(),
   authMiddleware,
   rolesMiddleware(["ADMIN","USER"])
 ], controller.start)
-router.get("/connect", [
+router.post("/connect", [
   cookie("token", "Empty token or is not JWT").isJWT(),
-  header("authgame", "Empty game token or is not JWT").isJWT(),
+  body("authgame", "Empty game token or is not JWT").isMongoId(),
   authMiddleware,
   rolesMiddleware(["ADMIN", "USER"]),
   gamePlayedIDMiddleware
@@ -25,7 +24,7 @@ router.get("/connect", [
 // * body : overallTime(required only for the game host, default: 0), xp, money, xpOverall(required only for the host, default: 0), moneyOverall(required only for the host, default:0)
 router.post("/end", [
   cookie("token", "Empty token or is not JWT").isJWT(),
-  header("authgame", "Empty game token or is not JWT").isJWT(),
+  body("authgame", "Empty game token or is not JWT").isMongoId(),
   body("xp", "xp is not int or is negative").isInt({min:0}),
   body("money", "money is not int or is negative").isInt({min:0}),
   body("overallTime", "Time is not int or is negative").isInt({min:0}),
@@ -34,11 +33,11 @@ router.post("/end", [
   authMiddleware,
   rolesMiddleware(["ADMIN","USER"]),
   gameInfoMiddleware,
-  gamePlayedIDMiddleware,
+  gamePlayedIDMiddleware
 ], controller.end)
-router.get('/exit', [
+router.post('/exit', [
   cookie("token", "Empty token or is not JWT").isJWT(),
-  header("authgame", "Empty game token or is not JWT").isJWT(),
+  body("authgame", "Empty game token or is not JWT").isMongoId(),
   authMiddleware,
   rolesMiddleware(["ADMIN", "USER"]),
   gamePlayedIDMiddleware

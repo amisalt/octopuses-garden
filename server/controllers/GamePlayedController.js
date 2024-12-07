@@ -9,7 +9,7 @@ const {validationResult} = require("express-validator")
 
 function generateGameToken(id, start, level){
   const payload = {
-    id,level,
+    id,level,start,
     iat:start
   }
   return jwt.sign(payload, process.env.SECRET, {algorithm:"HS512"})
@@ -45,9 +45,9 @@ class GamePlayedController{
           location:"server"
         }]})
       }
-      const game = new GamePlayed({start:Date.now(), players:[req.user.id], level:level._id, mode:mode.value})
+      const game = new GamePlayed({start:Date.now(), players:[req.user.id], gainQueue:[req.user.id], level:level._id, mode:mode.value})
       await game.save()
-      const gameToken = generateGameToken(game._id, game.start, game.level)
+      const gameToken = game._id
       return res.status(200).json({message:"Success", gameToken, errors:[{
         type:"server",
         msg:`Game started and game token gained`,
@@ -119,6 +119,7 @@ class GamePlayedController{
       }
       game.gainQueue = game.gainQueue.filter(userId=>userId != req.user.id)
       gameInfo.xp = gameInfo.xp + req.body.xp
+      console.log(gameInfo.money, req.body.money, 'STATS MONEEEEEY')
       gameInfo.money = gameInfo.money + req.body.money
       await game.save()
       if(!checkInLeaderboard(req.gamePlayed.id, req.gamePlayed.level, req.gamePlayed.mode)){
@@ -137,19 +138,6 @@ class GamePlayedController{
       return res.status(400).json({message:"Unhandled error", errors:e})
     }
   }
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async exit(req,res){
     try{
       const errors = validationResult(req)

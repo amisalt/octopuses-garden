@@ -7,7 +7,8 @@ module.exports = async function(req, res, next){
     next()
   }
   try{
-    const gameToken = req.headers?.authgame?.split(" ")[1]
+    console.log(req.body)
+    const gameToken = req.body?.authgame
     if(!gameToken){
       return res.status(403).json({message:`Nonexistance error`, errors:[{
         type:"game",
@@ -16,8 +17,7 @@ module.exports = async function(req, res, next){
         location:"game"
       }]})
     }
-    const decodedData = jwt.verify(gameToken, process.env.SECRET)
-    const game = await GamePlayed.findById(decodedData.id)
+    const game = await GamePlayed.findById(req.body.authgame)
     if(!game){
       return res.status(403).json({message:`Nonexistance error`, errors:[{
         type:"game",

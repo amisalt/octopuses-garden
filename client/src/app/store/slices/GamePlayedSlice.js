@@ -16,8 +16,8 @@ export const startQuery = createAsyncThunk(
 export const connectQuery = createAsyncThunk(
   "game/connectQuery",
   async()=>{
-    const gameToken = localStorage.getItem("gameToken")
-    const response = await axios.get(`/api/game/connect`, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
+    const gameToken = localStorage.getItem("gameToken111")
+    const response = await axios.post(`/api/game/connect`, {authgame:gameToken}).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
 )
@@ -25,15 +25,16 @@ export const connectQuery = createAsyncThunk(
 export const endQuery = createAsyncThunk(
   "game/endQuery",
   async({xp, money, overallTime, xpOverall, moneyOverall})=>{
-    const responseBody = {
+    const gameToken = localStorage.getItem("gameToken111")
+    console.log(gameToken)
+    const response = await axios.post(`/api/game/end`, {
       xp,
       money,
       overallTime: overallTime ?? 0,
       xpOverall: xpOverall ?? 0,
-      moneyOverall: moneyOverall ?? 0
-    } 
-    const gameToken = localStorage.getItem("gameToken")
-    const response = await axios.post(`/api/game/end`, responseBody, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
+      moneyOverall: moneyOverall ?? 0,
+      authgame:gameToken
+    }).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
 )
@@ -41,8 +42,8 @@ export const endQuery = createAsyncThunk(
 export const exitQuery = createAsyncThunk(
   "game/exitQuery",
   async()=>{
-    const gameToken = localStorage.getItem("gameToken")
-    const response = await axios.get(`/api/game/exit`, {headers:{"AuthGame":`Bearer ${gameToken}`}}).then(res=>res.data).catch(error=>error.response.data)
+    const gameToken = localStorage.getItem("gameToken111")
+    const response = await axios.post(`/api/game/exit`, {authgame:gameToken}).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
 )
@@ -138,6 +139,15 @@ const GamePlayedSlice = createSlice({
     ...gameData
   },
   reducers:{
+    reset:()=>{
+      return {
+        ...getLeaderboardDataHook(),
+        loading:false,
+        errors:null,
+        message:null,
+        ...getGameDataHook()
+      }
+    },
     // * pause
     setPause(state,action){
       state.pause = action.payload
@@ -148,10 +158,13 @@ const GamePlayedSlice = createSlice({
       saveGameDataHook(state)
     },
     // * {levels, levelId}
+    // ! akfjdsklgjfgsdfjsghueijrkdfkbghutoirekodfmjdkegurwiekdmfsdghkrwejkfdghdkrjfekdnbhg
     setBonuses(state, action){
       const level = action.payload.levels.find(level=>level._id === action.payload.levelId)
       state.priceBonus = level.priceBonus
       state.xpBonus = level.xpBonus
+      // state.priceBonus = 1
+      // state.xpBonus = 1
       saveGameDataHook(state)
     },
     setPrices(state){
@@ -171,7 +184,6 @@ const GamePlayedSlice = createSlice({
     },
     // * {id}
     removeOrder(state, action){
-      console.log("AYOOOOO")
       state.orders = state.orders.filter((order)=>order.id!==action.payload.id)
       localStorage.removeItem('currentWaitingTime')
       saveGameDataHook(state)
@@ -190,10 +202,12 @@ const GamePlayedSlice = createSlice({
           state.orders[0].overallNumber -= 1
         }
         // ? IF THE ORDER IS DONE CALCULATING REVENUE
-        if (state.orders[0].overallNumber <= 0 && action.payload.time > 0){
-          const xp = Math.round(100*state.xpBonus*(action.payload.time/state.orders[0].time))
+        console.log(state.orders[0].overallNumber <= 1 && action.payload.time > 0, state.orders[0].overallNumber, action.payload.time)
+        if (state.orders[0].overallNumber <= 0 && action.payload.time.time > 0){
+          const xp = Math.round(100*state.xpBonus*(action.payload.time.time/state.orders[0].time))
           state.xp += xp
           state.xpOverall += xp
+          console.log('XP',state.xp)
           state.money += state.orders[0].money
           state.moneyOverall += state.orders[0].money
         }
@@ -259,7 +273,7 @@ const GamePlayedSlice = createSlice({
     // START
     .addCase(startQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(startQuery.fulfilled, (state,action)=>{
@@ -268,7 +282,8 @@ const GamePlayedSlice = createSlice({
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
         console.log(action.payload.gameToken)
-        localStorage.setItem("gameToken", action.payload.gameToken)
+        localStorage.setItem("gameToken111", action.payload.gameToken)
+        console.log(localStorage.getItem('gameToken'))
       }else{
         localStorage.removeItem("gameToken")
       }
@@ -276,7 +291,7 @@ const GamePlayedSlice = createSlice({
     // CONNECT
     .addCase(connectQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(connectQuery.fulfilled, (state,action)=>{
@@ -287,7 +302,7 @@ const GamePlayedSlice = createSlice({
     // END
     .addCase(endQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(endQuery.fulfilled, (state,action)=>{
@@ -298,7 +313,7 @@ const GamePlayedSlice = createSlice({
     // EXIT
     .addCase(exitQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(exitQuery.fulfilled, (state,action)=>{
@@ -309,7 +324,7 @@ const GamePlayedSlice = createSlice({
     // LEADERBOARD
     .addCase(leaderboardByLevelQuery.pending, (state, action) => {
       state.loading = true
-      state.error = null
+      state.errors = null
       state.message = null
     })
     .addCase(leaderboardByLevelQuery.fulfilled, (state,action)=>{
@@ -325,7 +340,7 @@ const GamePlayedSlice = createSlice({
     // CREATE MODE
     .addCase(createModeQuery.pending, (state) => {
       state.loading = true;
-      state.error = null;
+      state.errors = null;
       state.message = null;
     })
     .addCase(createModeQuery.fulfilled, (state, action) => {
@@ -336,7 +351,7 @@ const GamePlayedSlice = createSlice({
     // DELETE MODE
     .addCase(deleteModeQuery.pending, (state) => {
       state.loading = true;
-      state.error = null;
+      state.errors = null;
       state.message = null;
     })
     .addCase(deleteModeQuery.fulfilled, (state, action) => {
@@ -347,5 +362,5 @@ const GamePlayedSlice = createSlice({
   }
 })
 
-export const {setPause, addSecond, setBonuses, setPrices, setAction, makeNewOrder, removeOrder, updateOrder, grabItem, giveItem, changeActiveTentacle, removeHoldItem, buyTentacle} = GamePlayedSlice.actions
+export const { reset, setPause, addSecond, setBonuses, setPrices, setAction, makeNewOrder, removeOrder, updateOrder, grabItem, giveItem, changeActiveTentacle, removeHoldItem, buyTentacle} = GamePlayedSlice.actions
 export default GamePlayedSlice.reducer
