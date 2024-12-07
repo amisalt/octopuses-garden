@@ -13,7 +13,7 @@ const generateAccessToken = (id, roles)=>{
     id,roles,
     iat:Date.now()
   }
-  return jwt.sign(payload, process.env.SECRET, {expiresIn:60, algorithm:"HS512"})
+  return jwt.sign(payload, process.env.SECRET, {expiresIn:360, algorithm:"HS512"})
 }
 const generateRefreshToken = ()=>{
   return randtoken.uid(256)
@@ -61,7 +61,7 @@ class AuthController{
         asAdmin
       }
       await user.save();
-      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
+      res.cookie("token", token, { expire:Date.now()+1000*360, httpOnly: true })
       .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*1000, httpOnly: true, sameSite:true })
       res.status(200).json({message:"Success", user:userObject, errors:[{
         type:"server",
@@ -126,7 +126,7 @@ class AuthController{
         username:user.username,
         asAdmin
       }
-      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
+      res.cookie("token", token, { expire:Date.now()+1000*360, httpOnly: true })
       .cookie("refreshToken", refreshToken, { expire:Date.now()+1000*60*1000, httpOnly: true, sameSite:true })
       return res.status(200).json({message:"Success", asAdmin, user:userObject, errors:[{
         type:"server",
@@ -182,8 +182,8 @@ class AuthController{
         username:user.username,
         asAdmin
       }
-      res.cookie("token", token, { expire:Date.now()+1000*60, httpOnly: true })
-      .cookie("refreshToken", newRefreshToken, { expire:Date.now()+1000*60*10, httpOnly: true, sameSite:true })
+      res.cookie("token", token, { expire:Date.now()+1000*360, httpOnly: true })
+      .cookie("refreshToken", newRefreshToken, { expire:Date.now()+1000*60*1000, httpOnly: true, sameSite:true })
       return res.status(200).json({message:"Success", user:userObject, errors:[{
         type:"server",
         msg:"Access token generated successfully!",

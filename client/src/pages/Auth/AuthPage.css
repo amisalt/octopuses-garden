@@ -25,6 +25,9 @@
 .AuthPage-Logo{
   max-width: 50dvw;
 }
+.AuthPage section h1{
+  font-size: var(--font-size-big);
+}
 
 @media screen and (max-height: 700px) and (orientation: landscape) {
   .AuthPage{

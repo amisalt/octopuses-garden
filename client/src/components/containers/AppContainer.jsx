@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAppData, setGameState, setWindowDimensions } from '../../app/store/slices/AppDataSlice'
 import { getWindowDimensions } from '../../hooks/getWindowDimensions'
@@ -8,10 +8,12 @@ import { NavbarGlobal } from '../navigation/NavbarGlobal/NavbarGlobal'
 import { MessageContainer } from './MessageContainer/MessageContainer'
 import { useLocation } from 'react-router-dom'
 import { removeGameDataHook } from '../../hooks/getDataHooks'
+import { reset } from '../../app/store/slices/GamePlayedSlice'
 
 export function AppContainer({children}) {
   const dispatch = useDispatch()
   const loggedIn = useSelector(state=>state.auth.loggedIn)
+  const [tokenInterval, setTokenInterval] = useState(null)
   useEffect(()=>{
     dispatch(getAppData())
     dispatch(getAuthData())
@@ -23,9 +25,11 @@ export function AppContainer({children}) {
   }, [])
   useEffect(()=>{
     if(loggedIn){
-      setInterval(()=>{
+      setTokenInterval(setInterval(()=>{
         dispatch(tokenQuery())
-      }, 60*1000)
+      }, 60*1000))
+    }else{
+      clearInterval(tokenInterval)
     }
   }, [loggedIn])
   const route = useLocation()
@@ -34,6 +38,7 @@ export function AppContainer({children}) {
       console.log("REMOVE GAME DATA")
       removeGameDataHook()
       dispatch(setGameState(false))
+      dispatch(reset())
     }else{
       dispatch(setGameState(true))
     }
