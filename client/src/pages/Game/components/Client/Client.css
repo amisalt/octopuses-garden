@@ -54,3 +54,7 @@
 .Client:not(:nth-child(1)){
   display: none;
 }
+
+.Client .Tentacle{
+  right: calc(16dvh + 1rem);
+}
