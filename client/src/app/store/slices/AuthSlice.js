@@ -229,10 +229,10 @@ const AuthSlice = createSlice({
           username:null,
           asAdmin:false
         }
-        saveAuthDataHook()
+        saveAuthDataHook(state)
       }else{
         state.loggedIn = true
-        saveAuthDataHook()
+        saveAuthDataHook(state)
       }
     })
     // !ADMIN RIGHTS QUERY

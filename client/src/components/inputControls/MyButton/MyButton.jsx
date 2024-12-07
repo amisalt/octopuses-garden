@@ -18,3 +18,9 @@ export function MyButtonGame({onClick, width, children, ...props}) {
     <button style={{width}} {...props} className='MyButton Game' onClick={onClick}>{children}</button>
   )
 }
+
+export function MyButtonTransparent({onClick, width, children, ...props}) {
+  return (
+    <button style={{width}} {...props} className='MyButton Transparent' onClick={onClick}>{children}</button>
+  )
+}

@@ -4,12 +4,17 @@ import { statsQuery } from '../../app/store/slices/GameInfoSlice'
 import logo from "../../static/images/logo.png"
 import coin from "../../static/images/coinYellow.svg"
 import star from "../../static/images/starYellow.svg"
+import exit from "../../static/images/exitYellow.svg"
 import "./AccountPage.css"
+import { MyButtonTransparent } from '../../components/inputControls/MyButton/MyButton'
+import { logoutQuery } from '../../app/store/slices/AuthSlice'
+import { MyProgressLinearInDeterminate } from '../../components/informationals/ProgressBar/MyProgress'
 
 export function AccountPage() {
   const dispatch = useDispatch()
   const user = useSelector(state=>state.auth.user)
   const stats = useSelector(state=>state.gameInfo.stats)
+  const loading = useSelector(state=>state.auth.loading)
   const moneyDisplay = useMemo(()=>{
     if(stats.money < 1000) return stats.money
     return Math.floor(stats.money/1000) + "k"
@@ -21,12 +26,20 @@ export function AccountPage() {
   useEffect(()=>{
     dispatch(statsQuery())
   }, [])
+
+  function handleLogoutQuery(){
+    dispatch(logoutQuery())
+  }
+
   return (
     <main className='page'>
       <div className="AccountPage">
         <section className="Name">
-          <img src={logo} alt='pfp' className='PFP'/>
-          <h1 className='Username'>{user.username}</h1>
+          <section className='Account'>
+            <img src={logo} alt='pfp' className='PFP'/>
+            <h1 className='Username'>{user.username}</h1>
+          </section>
+          <MyButtonTransparent width='7dvh' onClick={handleLogoutQuery}><img src={exit} alt="exit img" className='StatsImg'/></MyButtonTransparent>
         </section>
         <section className="Stats">
           <section className='StatsDisplay'>
@@ -43,6 +56,7 @@ export function AccountPage() {
           <p>Coming soon...</p>
         </section>
       </div>
+      {loading && <MyProgressLinearInDeterminate width="100dvw"/>}
     </main>
   )
 }

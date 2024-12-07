@@ -25,6 +25,11 @@
   border-color: var(--accent-color-blue);
 }
 
+.MyButton.Transparent{
+  background-color: transparent;
+  border: 0;
+}
+
 .MyButton.Violet{
   color: var(--bg-color-violet);
   background-color: var(--accent-color-pink);
