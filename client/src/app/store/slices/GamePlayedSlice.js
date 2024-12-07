@@ -15,8 +15,7 @@ export const startQuery = createAsyncThunk(
 
 export const connectQuery = createAsyncThunk(
   "game/connectQuery",
-  async()=>{
-    const gameToken = localStorage.getItem("gameToken111")
+  async(gameToken)=>{
     const response = await axios.post(`/api/game/connect`, {authgame:gameToken}).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
@@ -24,8 +23,7 @@ export const connectQuery = createAsyncThunk(
 
 export const endQuery = createAsyncThunk(
   "game/endQuery",
-  async({xp, money, overallTime, xpOverall, moneyOverall})=>{
-    const gameToken = localStorage.getItem("gameToken111")
+  async({xp, money, overallTime, xpOverall, moneyOverall, gameToken})=>{
     console.log(gameToken)
     const response = await axios.post(`/api/game/end`, {
       xp,
@@ -41,8 +39,7 @@ export const endQuery = createAsyncThunk(
 
 export const exitQuery = createAsyncThunk(
   "game/exitQuery",
-  async()=>{
-    const gameToken = localStorage.getItem("gameToken111")
+  async(gameToken)=>{
     const response = await axios.post(`/api/game/exit`, {authgame:gameToken}).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
@@ -282,10 +279,10 @@ const GamePlayedSlice = createSlice({
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
         console.log(action.payload.gameToken)
-        localStorage.setItem("gameToken111", action.payload.gameToken)
-        console.log(localStorage.getItem('gameToken'))
+        state.gameToken = action.payload.gameToken
+        console.log(state.gameToken)
       }else{
-        localStorage.removeItem("gameToken")
+        state.gameToken = ''
       }
     })
     // CONNECT

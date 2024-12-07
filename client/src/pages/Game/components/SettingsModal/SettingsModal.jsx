@@ -11,7 +11,7 @@ import { removeGameDataHook } from '../../../../hooks/getDataHooks'
 
 export function SettingsModal({show, hideModal}) {
   const dispatch = useDispatch()
-  const {xp, money, xpOverall, moneyOverall, overallTime, errors, message} = useSelector(state=>state.game)
+  const {xp, money, xpOverall, moneyOverall, overallTime, errors, message, gameToken} = useSelector(state=>state.game)
   const {BGMvolume, SEvolume} = useSelector(state=>state.appData)
   const [BGMvolumeReactive, setBGMvolume] = useState(BGMvolume*100)
   const [SEvolumeReactive, setSEvolume] = useState(SEvolume*100)
@@ -27,10 +27,10 @@ export function SettingsModal({show, hideModal}) {
   }
 
   function handleEndQuery(){
-    dispatch(endQuery({xp, money, overallTime, xpOverall, moneyOverall}))
+    dispatch(endQuery({xp, money, overallTime, xpOverall, moneyOverall, gameToken}))
   }
   function handleExitQuery(){
-    dispatch(exitQuery())
+    dispatch(exitQuery(gameToken))
   }
 
   useEffect(()=>{
