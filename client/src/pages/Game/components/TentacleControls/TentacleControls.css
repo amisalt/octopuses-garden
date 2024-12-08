@@ -19,8 +19,16 @@
 }
 .TentacleControls .HoldItem{
   position: absolute;
-  top: 0px;
+  top: 2px;
   left: 0px;
+}
+.TentacleControls .HoldItem[food='bun'], .TentacleControls .HoldItem[food='salad'], .TentacleControls .HoldItem[food='fries']{
+  width: 85%;
+  left: 7.5%;
+}
+.TentacleControls .HoldItem[food='drink']{
+  width: 60%;
+  left: 20%;
 }
 .TentacleControls .TentacleActionButton{
   position: absolute;

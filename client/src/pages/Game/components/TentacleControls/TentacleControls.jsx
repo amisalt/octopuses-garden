@@ -29,7 +29,7 @@ export function TentacleControls({index}) {
   return (
     <div className='TentacleControls' is-active={`${tentacle.active}`} onClick={!tentacle.active ? handleChangeActiveTentacle : null}>
       <section>
-        {tentacle.holdItem && (<img src={`/api/image/food/${tentacle.holdItem}.png`} alt={tentacle.holdItem} className='HoldItem'/>)}
+        {tentacle.holdItem && (<img src={`/api/image/food/${tentacle.holdItem}.png`} alt={tentacle.holdItem} className='HoldItem' food={tentacle.holdItem}/>)}
         <img src={`/api/image/icons/tentacles/${tentacle.color}.png`} alt={`controls ${tentacle.color}`} className='TentacleImg'/>
         {tentacle.active && tentacle.holdItem && <button onClick={handleRemoveHoldItem} className='TentacleActionButton'>X</button>}
       </section>
