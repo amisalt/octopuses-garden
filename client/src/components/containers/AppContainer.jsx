@@ -6,12 +6,13 @@ import { getAuthData, tokenQuery } from '../../app/store/slices/AuthSlice'
 import AppRouter from '../../app/router/AppRouter'
 import { NavbarGlobal } from '../navigation/NavbarGlobal/NavbarGlobal'
 import { MessageContainer } from './MessageContainer/MessageContainer'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { removeGameDataHook } from '../../hooks/getDataHooks'
 import { reset } from '../../app/store/slices/GamePlayedSlice'
 
 export function AppContainer({children}) {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const loggedIn = useSelector(state=>state.auth.loggedIn)
   const [tokenInterval, setTokenInterval] = useState(null)
   useEffect(()=>{
@@ -33,6 +34,9 @@ export function AppContainer({children}) {
     }
   }, [loggedIn])
   const route = useLocation()
+  const gameToken = useSelector(state=>state.game.gameToken)
+  const messageGame = useSelector(state=>state.game.message)
+  const loadingGame = useSelector(state=>state.game.loading)
   useEffect(()=>{
     if(!route.pathname.includes('/level')){
       console.log("REMOVE GAME DATA")
@@ -40,11 +44,20 @@ export function AppContainer({children}) {
       dispatch(setGameState(false))
       dispatch(reset())
     }else{
-      dispatch(setGameState(true))
+      if(gameToken){
+        console.log('YES GAME TOKEN')
+        dispatch(setGameState(true))
+      }
+      else {
+        console.log('NO GAME TOKEN')
+        if(messageGame !== 'Success' && !loadingGame) navigate('/')
+        else if(messageGame === 'Success' && !loadingGame) dispatch(setGameState(true))
+      }
+    
     }
-  }, [route])
+  }, [route, gameToken])
   return (
-    <div>
+    <div onDragStart={(e)=>e.preventDefault()}>
       <AppRouter/>
       <NavbarGlobal/>
       <MessageContainer/>
