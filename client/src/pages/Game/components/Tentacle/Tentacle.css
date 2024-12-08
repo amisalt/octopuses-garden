@@ -3,10 +3,10 @@
     transform: translateY(0);
   }
   45%{
-    transform: translateY(150dvh);
+    transform: translateY(89dvh);
   }
   55%{
-    transform: translateY(150dvh);
+    transform: translateY(89dvh);
   }
   to{
     transform: translateY(0);
@@ -14,10 +14,10 @@
 }
 @keyframes foodGrab {
   from{
-    transform: translateY(147.5dvh);
+    transform: translateY(86.5dvh);
   }
   18%{
-    transform: translateY(147.5dvh);
+    transform: translateY(86.5dvh);
   }
   to{
     transform: translateY(0);
@@ -31,7 +31,7 @@
     transform: translate(0);
   }
   to{
-    transform: translateY(147.5dvh);
+    transform: translateY(86.5dvh);
   }
 }
 
@@ -41,10 +41,9 @@
   justify-content: flex-end;
   align-items: center;
   gap: 0;
-  width: 15dvh;
+  width: 172px;
   position: absolute;
-  /* top: -150dvh; */
-  bottom: 150dvh;
+  bottom: 89dvh;
   z-index: 90000;
 }
 .Body, .Food{
@@ -53,7 +52,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 0;
-  width: 15dvh;
+  width: 172px;
 }
 .Tentacle img, .Tentacle div{
   margin: 0;
@@ -66,8 +65,14 @@
   background-repeat: repeat-y;
   height: 100dvh;
 }
-.Food{
+.Tentacle .Food{
   position: absolute;
-  width: 10dvh;
-  bottom: 0;
+  width: 105px;
+  bottom: 20px;
+}
+.Tentacle .Food[food='meat'], .Tentacle .Food[food='meatC'], .Tentacle .Food[food='burger']{
+  width: 115px;
+}
+.Tentacle .Food[food='drink']{
+  width: 65px;
 }

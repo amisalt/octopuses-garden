@@ -45,7 +45,7 @@ export function Tentacle({evoker, communicateDevice}) {
           <img src={`/api/image/sprites/end/${activeTentacle.color}.png`} alt='end' className='TentacleEnd'/>
         ) : null}
       </div>
-      <div className="Food" style={{animation:animationsFood}}>
+      <div className="Food" style={{animation:animationsFood}} food={action.item}>
         <img src={`/api/image/food/${action.item}.png`} alt={activeTentacle.holdItem} className='TentacleGrabItem'/>
       </div>
     </div>
