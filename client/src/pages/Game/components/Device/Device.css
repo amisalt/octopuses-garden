@@ -1,30 +1,43 @@
 .Device{
-  width: 10vh;
-  height: 10vh;
+  width: 115px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+.Device[food='salad'], .Device[food='bun']{
+  max-width: 90px;
+}
+.Device[food='meat'], .Device[food='drink'], .Device[food='friess']{
+  max-width: 110px;
+}
+.Device[food='meatC']{
+  max-width: 115px;
+}
 .Device > .Main{
   width: 100%;
-  height: 100%;
   object-fit: contain;
+}
+.Device[food='drink'] .Main{
+  align-self: flex-end;
 }
 .Device > .Status{
   position: absolute;
-  width: 8vh;
-  height: 8vh;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
   background-color: var(--bg-color-black);
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  top: -7.5vh;
-  left: 1vh;
+  bottom: 50%;
+  left: 11.5px;
 }
-.Device > .Cooked{
-  width: 100%;
-  background-color: aqua;
+.Device .Cooked{
+  width: 90%;
+  height: 90%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }

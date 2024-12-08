@@ -18,6 +18,8 @@ export function Device({food, cooldown, evokerID}) {
   const [time, setTime] = useState(0)
   const [startCookingSignal, setStartCookingSignal] = useState(false)
   const [cookingInterval, setCookingInterval] = useState(null)
+  const [fireInterval, setFireInterval] = useState(null)
+  const [fireTime, setFireTime] = useState(5000)
   
   const [holdItemNow, setHoldItem] = useState(null)
 
@@ -71,11 +73,11 @@ export function Device({food, cooldown, evokerID}) {
   }, [time, pause])
 
   return (
-    <div className='Device' onClick={handleOnClick}>
+    <div className='Device' onClick={handleOnClick} food={food}>
       <img src={`/api/image/devices/${food}.png`} alt={`${food} device`} className='Main'/>
       { cookingProgress>0 && <div className='Status'>
         { ready ? 
-        (<img src={`/api/image/food/${food}.png`} alt={`cooked ${food}`} className='Cooked'/>) : 
+        (<div style={{backgroundImage:`url(/api/image/food/${food}.png)`}} className='Cooked'></div>) : 
         (<MyProgressCircularDeterminate progress={cookingProgress}/>)
         }
       </div>}
