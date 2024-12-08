@@ -3,10 +3,10 @@
     transform: translateY(0);
   }
   45%{
-    transform: translateY(89dvh);
+    transform: translateY(150dvh);
   }
   55%{
-    transform: translateY(89dvh);
+    transform: translateY(150dvh);
   }
   to{
     transform: translateY(0);
@@ -14,10 +14,10 @@
 }
 @keyframes foodGrab {
   from{
-    transform: translateY(86.5dvh);
+    transform: translateY(147.5dvh);
   }
   18%{
-    transform: translateY(86.5dvh);
+    transform: translateY(147.5dvh);
   }
   to{
     transform: translateY(0);
@@ -31,7 +31,7 @@
     transform: translate(0);
   }
   to{
-    transform: translateY(86.5dvh);
+    transform: translateY(147.5dvh);
   }
 }
 
@@ -43,7 +43,7 @@
   gap: 0;
   width: 172px;
   position: absolute;
-  bottom: 89dvh;
+  bottom: 150dvh;
   z-index: 90000;
 }
 .Body, .Food{
