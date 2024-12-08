@@ -18,8 +18,13 @@
   width: 100%;
   object-fit: contain;
 }
+.Device[food='drink']{
+  height: 115px;
+}
 .Device[food='drink'] .Main{
   align-self: flex-end;
+  position: absolute;
+  top: -30px;
 }
 .Device > .Status{
   position: absolute;
@@ -40,4 +45,11 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+.Device .FireHazard{
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--accent-color-pink);
+  position: absolute;
 }

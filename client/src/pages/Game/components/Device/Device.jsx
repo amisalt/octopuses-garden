@@ -19,7 +19,8 @@ export function Device({food, cooldown, evokerID}) {
   const [startCookingSignal, setStartCookingSignal] = useState(false)
   const [cookingInterval, setCookingInterval] = useState(null)
   const [fireInterval, setFireInterval] = useState(null)
-  const [fireTime, setFireTime] = useState(5000)
+  const [fireTime, setFireTime] = useState(0)
+  const [startFireSignal, setStartFireSignal] = useState(false)
   
   const [holdItemNow, setHoldItem] = useState(null)
 
@@ -64,13 +65,42 @@ export function Device({food, cooldown, evokerID}) {
     if(!pause  && startCookingSignal){
       setCookingProgress(Math.round(time/cookingTime*100))
       if(time > cookingTime){
-        console.log('Time excession')
         setReady(true)
         setStartCookingSignal(false)
         clearInterval(cookingInterval)
       }
     }
   }, [time, pause])
+  // ! - - - -- - - - - - - - - -- - - FireTimer- - - - - - -- 
+  useEffect(()=>{
+    if(['meatC', 'fries'].includes(food)){
+      if(ready) setTimeout(()=>setStartFireSignal(true), 2000) 
+    }else{
+      setStartFireSignal(false)
+    }
+  }, [ready])
+  useEffect(()=>{
+    if(startFireSignal && !pause){
+      setFireInterval(setInterval(() => {
+        setFireTime((prev)=>prev+100)
+      }, 100))
+    }else{
+      clearInterval(fireInterval)
+    }
+  }, [startFireSignal, pause])
+  useEffect(()=>{
+    if(!pause  && startFireSignal){
+      if(fireTime > 5000){
+        console.log('Time excession')
+        setReady(false)
+        setFireTime(0)
+        setCookingProgress(0)
+        setTime(0)
+        setStartFireSignal(false)
+        clearInterval(fireInterval)
+      }
+    }
+  }, [fireTime, pause])
 
   return (
     <div className='Device' onClick={handleOnClick} food={food}>
@@ -80,6 +110,7 @@ export function Device({food, cooldown, evokerID}) {
         (<div style={{backgroundImage:`url(/api/image/food/${food}.png)`}} className='Cooked'></div>) : 
         (<MyProgressCircularDeterminate progress={cookingProgress}/>)
         }
+        <div className="FireHazard" style={{opacity:fireTime/5000}}></div>
       </div>}
       <Tentacle evoker={evokerID} communicateDevice={setHoldItem}/>
     </div>
