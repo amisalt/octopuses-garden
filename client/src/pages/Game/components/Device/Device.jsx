@@ -21,6 +21,7 @@ export function Device({food, cooldown, evokerID}) {
   const [fireInterval, setFireInterval] = useState(null)
   const [fireTime, setFireTime] = useState(0)
   const [startFireSignal, setStartFireSignal] = useState(false)
+  const [fireTimeout, setFireTimoeout] = useState(null)
   
   const [holdItemNow, setHoldItem] = useState(null)
 
@@ -41,12 +42,20 @@ export function Device({food, cooldown, evokerID}) {
           setReady(false)
           setCookingProgress(0)
           setTime(0)
+          setFireTime(0)
+          setStartFireSignal(false)
+          clearInterval(fireInterval)
+          clearTimeout(fireTimeout)
         }
         else if(!holdItemNow){
           dispatch(grabItem({item:food, evoker:evokerID}))
           setReady(false)
           setCookingProgress(0)
           setTime(0)
+          setFireTime(0)
+          setStartFireSignal(false)
+          clearInterval(fireInterval)
+          clearTimeout(fireTimeout)
         }
       }
     }
@@ -74,7 +83,8 @@ export function Device({food, cooldown, evokerID}) {
   // ! - - - -- - - - - - - - - -- - - FireTimer- - - - - - -- 
   useEffect(()=>{
     if(['meatC', 'fries'].includes(food)){
-      if(ready) setTimeout(()=>setStartFireSignal(true), 2000) 
+      if(ready) setFireTimoeout(setTimeout(()=>setStartFireSignal(true), 2000))
+      else clearInterval(fireInterval)
     }else{
       setStartFireSignal(false)
     }
