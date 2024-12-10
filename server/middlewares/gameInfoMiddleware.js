@@ -8,7 +8,6 @@ module.exports = async function(req, res, next){
     next()
   }
   try{
-    console.log(req.user.gameInfo)
     const gameInfo = await GameInfo.findById(req.user.gameInfo)
     if(!gameInfo){
       return res.status(403).json({message:`Nonexistance error`, errors:[{

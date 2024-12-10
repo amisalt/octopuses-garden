@@ -22,6 +22,7 @@ export function AppContainer({children}) {
       dispatch(setWindowDimensions(getWindowDimensions()))
     }
     window.addEventListener('resize', handleResize);
+    dispatch(tokenQuery())
     return () => window.removeEventListener('resize', handleResize);
   }, [])
   useEffect(()=>{
@@ -39,21 +40,17 @@ export function AppContainer({children}) {
   const loadingGame = useSelector(state=>state.game.loading)
   useEffect(()=>{
     if(!route.pathname.includes('/level')){
-      console.log("REMOVE GAME DATA")
       removeGameDataHook()
       dispatch(setGameState(false))
       dispatch(reset())
     }else{
       if(gameToken){
-        console.log('YES GAME TOKEN')
         dispatch(setGameState(true))
       }
       else {
-        console.log('NO GAME TOKEN')
         if(messageGame !== 'Success' && !loadingGame) navigate('/')
         else if(messageGame === 'Success' && !loadingGame) dispatch(setGameState(true))
       }
-    
     }
   }, [route, gameToken])
   return (

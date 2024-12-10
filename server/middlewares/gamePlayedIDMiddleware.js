@@ -7,7 +7,6 @@ module.exports = async function(req, res, next){
     next()
   }
   try{
-    console.log(req.body)
     const gameToken = req.body?.authgame
     if(!gameToken){
       return res.status(403).json({message:`Nonexistance error`, errors:[{

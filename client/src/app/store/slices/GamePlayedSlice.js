@@ -24,7 +24,6 @@ export const connectQuery = createAsyncThunk(
 export const endQuery = createAsyncThunk(
   "game/endQuery",
   async({xp, money, overallTime, xpOverall, moneyOverall, gameToken})=>{
-    console.log(gameToken)
     const response = await axios.post(`/api/game/end`, {
       xp,
       money,
@@ -199,12 +198,10 @@ const GamePlayedSlice = createSlice({
           state.orders[0].overallNumber -= 1
         }
         // ? IF THE ORDER IS DONE CALCULATING REVENUE
-        console.log(state.orders[0].overallNumber <= 1 && action.payload.time > 0, state.orders[0].overallNumber, action.payload.time)
         if (state.orders[0].overallNumber <= 0 && action.payload.time.time > 0){
           const xp = Math.round(100*state.xpBonus*(action.payload.time.time/state.orders[0].time))
           state.xp += xp
           state.xpOverall += xp
-          console.log('XP',state.xp)
           state.money += state.orders[0].money
           state.moneyOverall += state.orders[0].money
         }
@@ -278,9 +275,7 @@ const GamePlayedSlice = createSlice({
       state.message = action.payload.message
       state.errors = action.payload.errors
       if(action.payload.message === "Success"){
-        console.log(action.payload.gameToken)
         state.gameToken = action.payload.gameToken
-        console.log(state.gameToken)
       }else{
         state.gameToken = ''
       }

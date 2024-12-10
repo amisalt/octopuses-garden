@@ -11,7 +11,6 @@ export function MainPage() {
   const navigate = useNavigate()
   const availableLevels = useSelector(state=>state.gameInfo.levels.availableLevels)
   const message = useSelector(state=>state.game.message)
-  console.log(availableLevels)
 
   function handleStartQuery(levelId, mode){
     dispatch(startQuery({levelId, mode}))

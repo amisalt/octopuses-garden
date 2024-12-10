@@ -14,7 +14,7 @@ export const registrationQuery = createAsyncThunk(
 export const logInQuery =  createAsyncThunk(
   'auth/logInQuery',
   async ({username,password}) => {
-    const response = await axios.post("/api/auth/login", {username,password}).then(res=>res.data).catch(error=>error.response.data.message)
+    const response = await axios.post("/api/auth/login", {username,password}).then(res=>res.data).catch(error=>error.response.data)
     return response
   }
 )
@@ -176,6 +176,7 @@ const AuthSlice = createSlice({
       state.loading = false
       state.message = action.payload.message
       state.errors = action.payload.errors
+      console.log("LOGIN MESSAGE", action.payload.message)
       if(action.payload.message === "Success"){
         state.loggedIn = true
         state.user = action.payload.user
