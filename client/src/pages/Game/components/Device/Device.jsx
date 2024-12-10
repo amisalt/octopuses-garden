@@ -37,7 +37,7 @@ export function Device({food, cooldown, evokerID}) {
           setStartCookingSignal(true)
         }
       }else if(ready || cooldown === 0){
-        if(food === 'bun' && holdItemNow === 'meatC'){
+        if((food === 'bun' && holdItemNow === 'meatC') || (food === 'meatC' && holdItemNow === 'bun')){
           dispatch(grabItem({item:'burger', evoker:evokerID}))
           setReady(false)
           setCookingProgress(0)
@@ -101,7 +101,6 @@ export function Device({food, cooldown, evokerID}) {
   useEffect(()=>{
     if(!pause  && startFireSignal){
       if(fireTime > 5000){
-        console.log('Time excession')
         setReady(false)
         setFireTime(0)
         setCookingProgress(0)

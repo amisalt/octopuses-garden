@@ -9,7 +9,7 @@ import { Kitchen } from './Kitchen'
 import { Controls } from './Controls'
 import { MyProgressLinearInDeterminate } from '../../components/informationals/ProgressBar/MyProgress'
 
-import { addSecond, setBonuses, setPause, setPrices } from '../../app/store/slices/GamePlayedSlice'
+import { addSecond, setBonuses, setPause, setPrices, changeActiveTentacle } from '../../app/store/slices/GamePlayedSlice'
 
 export function GamePage() {
   const dispatch = useDispatch()
@@ -52,10 +52,27 @@ export function GamePage() {
     }
     return clearTimeInterval
   }, [])
+  // * - - - - - - - - - -- Changing controlled tentacle - - - - - - - - - - - - - 
+  const activeIndex = useSelector(state=>state.game.activeIndex)
+  
+  useEffect(()=>{
+    function handleChangeActiveTentacleOnKey({key}){
+      let newIndex = -1
+      if(['1','2','3','4'].includes(key)) newIndex = Number(key)-1
+      if(newIndex > -1 && newIndex !== activeIndex){
+        dispatch(changeActiveTentacle({index:newIndex}))
+      }
+    }
+    const page = document.getElementById('GAMEPAGE')
+    page.addEventListener('keydown', handleChangeActiveTentacleOnKey)
+    return function cleanup(){
+      page.removeEventListener('keydown', handleChangeActiveTentacleOnKey)
+    }
+  }, [activeIndex])
   // * - - - - - - - - - - - - - - - - GAME CYCLE - - - - - - - - - - - - - - - -
   return (
     <main className='page' style={{padding:0}} onClick={(e)=>hideModal(e)}>
-      <div className='GamePage'>
+      <div tabIndex='1' className='GamePage' id='GAMEPAGE'>
         <section className='Main'>
           <Menu hideModal={hideModal} showModal={showModal} modal={modal}/>
           <Clients levelId={levelId}/>
