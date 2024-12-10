@@ -24,6 +24,7 @@
 }
 .MyNavLink > img{
   height: 30%;
+  transition: .3;
 }
 .MyNavLinkActive > img{
   height: 60%;
@@ -33,6 +34,7 @@
   color: var(--font-color);
   font-family: "Jersey 25", sans-serif;
   margin: 3px;
+  transition: .3s;
 }
 .MyNavLinkActive > span{
   color: var(--bg-color-black);
