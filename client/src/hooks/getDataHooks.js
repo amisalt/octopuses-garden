@@ -20,7 +20,8 @@ export function getAuthDataHook(){
       username:null,
       asAdmin:false
     },
-    loggedIn:false
+    loggedIn:false,
+    // loggedIn:true
   }
 }
 
@@ -89,7 +90,8 @@ export function getGameDataHook(){
     moneyOverall:0,
     xp:0,
     money:0,
-    overallTime:0
+    overallTime:0,
+    gameToken:''
   }
 }
 
@@ -119,6 +121,7 @@ export function saveGameInfoDataHook(state){
     availableUpgrades:state.availableUpgrades,
     levels:state.levels
   }
+  localStorage.setItem("gameInfoData", JSON.stringify(gameInfoData))
 }
 
 export function saveGameDataHook(state){
@@ -134,7 +137,8 @@ export function saveGameDataHook(state){
     moneyOverall:state.moneyOverall,
     xp:state.xp,
     money:state.money,
-    overallTime:state.overallTime
+    overallTime:state.overallTime,
+    gameToken:state.gameToken
   }
   localStorage.setItem('gameData', JSON.stringify(gameData))
 }
