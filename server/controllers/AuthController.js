@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const {validationResult} = require("express-validator")
 const randtoken = require("rand-token")
+const { errorFormatter } = require("./errorFormatter.js")
 require("dotenv").config()
 
 const generateAccessToken = (id, roles)=>{
@@ -22,7 +23,7 @@ const generateRefreshToken = ()=>{
 class AuthController{
   async registration(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -76,7 +77,7 @@ class AuthController{
   }
   async login(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -141,7 +142,7 @@ class AuthController{
   }
   async token(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -197,7 +198,7 @@ class AuthController{
   }
   async logout(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -220,7 +221,7 @@ class AuthController{
   }
   async makeAdmin(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -260,7 +261,7 @@ class AuthController{
   }
   async removeAdmin(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -301,7 +302,7 @@ class AuthController{
   }
   async ban(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -344,7 +345,7 @@ class AuthController{
   }
   async createRole(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
@@ -374,7 +375,7 @@ class AuthController{
   }
   async deleteRole(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }

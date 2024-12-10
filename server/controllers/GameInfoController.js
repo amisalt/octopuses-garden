@@ -4,11 +4,12 @@ const Upgrade = require("../models/Upgrade")
 const GamePlayed = require("../models/GamePlayed")
 const Level = require("../models/Level")
 const {validationResult} = require("express-validator")
+const { errorFormatter } = require("./errorFormatter")
 
 class GameInfoController{
   async create(req, res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -33,7 +34,7 @@ class GameInfoController{
   }
   async stats(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -78,7 +79,7 @@ class GameInfoController{
   }
   async buyUpgrade(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -132,7 +133,7 @@ class GameInfoController{
   }
   async availableUpgrades(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -158,7 +159,7 @@ class GameInfoController{
   }
   async availableLevels(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -181,7 +182,7 @@ class GameInfoController{
   }
   async allStateStats(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -242,7 +243,7 @@ class GameInfoController{
   }
   async createLevel(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -269,7 +270,7 @@ class GameInfoController{
   }
   async deleteLevel(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors});
       }
@@ -297,7 +298,7 @@ class GameInfoController{
   }
   async createUpgrade(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
@@ -326,7 +327,7 @@ class GameInfoController{
   }
   async deleteUpgrade(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }

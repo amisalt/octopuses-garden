@@ -6,6 +6,7 @@ const Level = require("../models/Level")
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
 const {validationResult} = require("express-validator")
+const {errorFormatter} = require('./errorFormatter')
 
 function generateGameToken(id, start, level){
   const payload = {
@@ -23,7 +24,8 @@ async function checkInLeaderboard(gameId, levelId, mode){
 class GamePlayedController{
   async start(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
+      console.log(errors)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -61,7 +63,7 @@ class GamePlayedController{
   }
   async connect(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -98,7 +100,7 @@ class GamePlayedController{
   }
   async end(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -119,7 +121,6 @@ class GamePlayedController{
       }
       game.gainQueue = game.gainQueue.filter(userId=>userId != req.user.id)
       gameInfo.xp = gameInfo.xp + req.body.xp
-      console.log(gameInfo.money, req.body.money, 'STATS MONEEEEEY')
       gameInfo.money = gameInfo.money + req.body.money
       await game.save()
       if(!checkInLeaderboard(req.gamePlayed.id, req.gamePlayed.level, req.gamePlayed.mode)){
@@ -140,7 +141,7 @@ class GamePlayedController{
   }
   async exit(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -159,7 +160,7 @@ class GamePlayedController{
   }
   async leaderboardByLevel(req,res){
     try{
-      const errors = validationResult(req)
+      const errors = validationResult(req).formatWith(errorFormatter)
       if(!errors.isEmpty()){
         return res.status(400).json({message:"Validation error", errors:errors.errors})
       }
@@ -209,7 +210,7 @@ class GamePlayedController{
   }
   async createMode(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
@@ -241,7 +242,7 @@ class GamePlayedController{
   }
   async deleteMode(req, res) {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req).formatWith(errorFormatter);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Validation error", errors:errors.errors });
       }
