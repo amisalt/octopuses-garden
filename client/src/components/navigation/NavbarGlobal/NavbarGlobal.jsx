@@ -10,9 +10,9 @@ export function NavbarGlobal() {
   return (
     <div className='NavbarGlobal' style={{display:gameState ? "none" : "flex"}}>
       {loggedIn ? privateRoutes.map(route=>{
-        if(!route.path.includes("/level")) return (<MyNavLink key={route.path} route={route}/>)}
+        if(!route.path.includes("/level") && !route.path.includes("/tutorial")) return (<MyNavLink key={route.path} route={route}/>)}
       ) : publicRoutes.map(route=>{
-        if(!route.path.includes("/level")) return (<MyNavLink key={route.path} route={route}/>)}
+        if(!route.path.includes("/level") && !route.path.includes("/tutorial")) return (<MyNavLink key={route.path} route={route}/>)}
       )}
     </div>
   )
