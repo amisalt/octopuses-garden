@@ -26,6 +26,23 @@
   position: absolute;
   top: -30px;
 }
+@media screen and (max-height:880px) {
+  .Device{
+    width: 100px;
+  }
+  .Device[food='salad'], .Device[food='bun']{
+    max-width: 75px;
+  }
+  .Device[food='meat'], .Device[food='drink'], .Device[food='friess']{
+    max-width: 95px;
+  }
+  .Device[food='meatC']{
+    max-width: 100px;
+  }
+  .Device[food='drink']{
+    height: 100px;
+  }
+}
 .Device > .Status{
   position: absolute;
   width: 92px;

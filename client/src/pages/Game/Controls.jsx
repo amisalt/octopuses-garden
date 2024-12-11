@@ -3,7 +3,7 @@ import { TentacleControls } from './components/TentacleControls/TentacleControls
 
 export function Controls({levelId}) {
   return (
-    <div className='Controls' style={{backgroundImage:`url(/api/image/levels/${levelId}/top.png)`}}>
+    <div className='Controls' style={{backgroundImage:`url(/api/image/levels/${levelId}/bottom.png)`}}>
       <TentacleControls index={0}/>
       <TentacleControls index={1}/>
       <TentacleControls index={2}/>
