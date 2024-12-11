@@ -9,14 +9,27 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   overflow: hidden;
 }
 .Level{
   border: 0.3rem solid var(--accent-color-blue);
-  padding: .5rem;
+  padding: 1rem;
+  width: 100%;
 }
-.Level a{
+.MainPage section{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.MainPage section h1{
+  font-size: var(--font-size-big);
+} 
+/* .Level a, .MainPage .TutorialLink{ */
+.MainPage a{
   text-decoration: none;
   color: var(--font-color);
+  font-size: var(--font-size-big);
 }
