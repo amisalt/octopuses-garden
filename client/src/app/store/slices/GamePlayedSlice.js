@@ -178,10 +178,14 @@ const GamePlayedSlice = createSlice({
       if(state.orders.length < 8) state.orders.push(makeNewOrderObject(state.priceBonus))
       saveGameDataHook(state)
     },
-    // * {id}
+    // * {id, notReady}
     removeOrder(state, action){
       state.orders = state.orders.filter((order)=>order.id!==action.payload.id)
       localStorage.removeItem('currentWaitingTime')
+      if(action.payload.notReady){
+        state.money -= 10
+        state.moneyOverall -= 10
+      }
       saveGameDataHook(state)
     },
     // * {item, time, evoker}

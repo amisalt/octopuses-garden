@@ -54,7 +54,7 @@ export function Client({order, index}) {
       if(time < 0 && !removeDoneFlag){
         setAnimation('1s ease-out 1s 1 forwards clientLeave')
         setTimeout(()=>{
-          dispatch(removeOrder({id:order.id}))
+          dispatch(removeOrder({id:order.id, notReady:true}))
         }, 2000)
         setRemoveDoneFlag(true)
         clearInterval(waitingInterval)
@@ -68,7 +68,7 @@ export function Client({order, index}) {
         if(order.overallNumber == 1){
           setAnimation('1s ease-out 1s 1 forwards clientLeave')
           setTimeout(()=>{
-            dispatch(removeOrder({id:order.id}))
+            dispatch(removeOrder({id:order.id, notReady:false}))
           }, 2000)
         }
         dispatch(updateOrder({time:JSON.parse(localStorage.getItem('currentWaitingTime')), item:holdItemNow, evoker:order.id}))
