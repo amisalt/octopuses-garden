@@ -16,12 +16,12 @@ export function AccountPage() {
   const stats = useSelector(state=>state.gameInfo.stats)
   const loading = useSelector(state=>state.auth.loading)
   const moneyDisplay = useMemo(()=>{
-    if(stats.money < 1000) return stats.money
-    return Math.floor(stats.money/1000) + "k"
+    if(stats.money < 10000) return stats.money
+    return Math.round(stats.money*1000)/1000 + "k"
   }, [stats.money])
   const xpDisplay = useMemo(()=>{
-    if(stats.xp < 1000) return stats.xp
-    return Math.floor(stats.xp/1000) + "k"
+    if(stats.xp < 10000) return stats.xp
+    return Math.round(stats.xp*1000)/1000 + "k"
   }, [stats.xp])
   useEffect(()=>{
     dispatch(statsQuery())
