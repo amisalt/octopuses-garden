@@ -80,6 +80,7 @@ export function getGameDataHook(){
         active:false
       }
     ],
+    freeIndexes:[0],
     activeIndex:0,
     action:{
       type:null,
@@ -131,6 +132,10 @@ export function saveGameDataHook(state){
     xpBonus: state.xpBonus,
     orders:state.orders,
     tentacles:state.tentacles,
+    freeIndexes:state.tentacles.map(tentacle=>{
+      if(!tentacle.holdItem && tentacle.unlocked) return 1
+      return -1
+    }),
     activeIndex:state.activeIndex,
     action:state.action,
     xpOverall:state.xpOverall,

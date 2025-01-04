@@ -214,6 +214,13 @@ const GamePlayedSlice = createSlice({
     },
     // * {item, evoker}
     grabItem(state, action){
+      const freeIndex = state.tentacles.findIndex(tentacle=>!tentacle.holdItem && tentacle.unlocked)
+      console.log(freeIndex)
+      if(freeIndex > -1 && state.tentacles[state.activeIndex].holdItem) {
+        state.tentacles[state.activeIndex].active = false
+        state.activeIndex = freeIndex
+        state.tentacles[state.activeIndex].active = true
+      }
       if((!state.tentacles[state.activeIndex].holdItem  || action.payload.item === 'burger')&& !state.action.type){
         state.tentacles[state.activeIndex].holdItem = action.payload.item
         state.action = {

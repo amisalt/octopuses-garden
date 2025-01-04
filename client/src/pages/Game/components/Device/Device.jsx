@@ -12,7 +12,9 @@ export function Device({food, cooldown, evokerID}) {
   const upgrades = useSelector(state=>state.gameInfo.stats.upgrades[food])
   const action = useSelector(state=>state.game.action.type)
   const pause = useSelector(state=>state.game.pause)
-
+  const isThereFreeIndex = useSelector(state=>{
+    return 1 in state.game.freeIndexes
+  })
   const cookingTime = cooldown*(upgrades?.cooldown?.upgrade ?? 1)
   
   const [time, setTime] = useState(0)
@@ -37,7 +39,8 @@ export function Device({food, cooldown, evokerID}) {
           setStartCookingSignal(true)
         }
       }else if(ready || cooldown === 0){
-        if((food === 'bun' && holdItemNow === 'meatC') || (food === 'meatC' && holdItemNow === 'bun')){
+        console.log(isThereFreeIndex)
+        if((food === 'bun' || food === 'meatC') && isThereFreeIndex){
           dispatch(grabItem({item:'burger', evoker:evokerID}))
           setReady(false)
           setCookingProgress(0)
@@ -47,7 +50,7 @@ export function Device({food, cooldown, evokerID}) {
           clearInterval(fireInterval)
           clearTimeout(fireTimeout)
         }
-        else if(!holdItemNow){
+        else if(isThereFreeIndex){ 
           dispatch(grabItem({item:food, evoker:evokerID}))
           setReady(false)
           setCookingProgress(0)
